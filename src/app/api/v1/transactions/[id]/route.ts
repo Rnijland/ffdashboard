@@ -6,11 +6,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { xanoClient } from '@/lib/server/xano-client';
 import { CreateTransactionRequest } from '@/types/database';
 
-interface RouteParams {
-  params: { id: string };
+interface RouteContext {
+  params: Promise<{ id: string }>;
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, context: RouteContext) {
+  const params = await context.params;
   try {
     const id = parseInt(params.id);
     
@@ -41,7 +42,8 @@ return NextResponse.json(
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+export async function PATCH(request: NextRequest, context: RouteContext) {
+  const params = await context.params;
   try {
     const id = parseInt(params.id);
     
@@ -82,7 +84,8 @@ return NextResponse.json(
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(request: NextRequest, context: RouteContext) {
+  const params = await context.params;
   try {
     const id = parseInt(params.id);
     

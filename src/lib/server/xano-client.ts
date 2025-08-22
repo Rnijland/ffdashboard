@@ -157,7 +157,7 @@ return { error: `Network Error: ${error instanceof Error ? error.message : 'Unkn
 
   async updateTransaction(id: number, data: Partial<CreateTransactionRequest>) {
     // Recalculate net_amount if amount or fee changes
-    const updateData = { ...data };
+    const updateData: any = { ...data };
     if ('amount' in data || 'fee' in data) {
       const current = await this.getTransaction(id);
       if (current.data) {
