@@ -18,14 +18,12 @@ import {
 
 class XanoClient {
   private readonly baseUrl: string;
-  private readonly apiKey: string;
 
   constructor() {
     this.baseUrl = process.env.XANO_API_URL!;
-    this.apiKey = process.env.XANO_API_KEY!;
     
-    if (!this.baseUrl || !this.apiKey) {
-      throw new Error('Missing XANO_API_URL or XANO_API_KEY environment variables');
+    if (!this.baseUrl) {
+      throw new Error('Missing XANO_API_URL environment variable');
     }
   }
 
@@ -40,7 +38,6 @@ class XanoClient {
         ...options,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
           ...options.headers,
         },
       });
