@@ -15,6 +15,7 @@ export async function testXanoIntegration() {
     
     if (agenciesResult.error) {
       console.error('❌ Get agencies failed:', agenciesResult.error);
+
       return false;
     }
     
@@ -32,6 +33,7 @@ export async function testXanoIntegration() {
     
     if (createResult.error) {
       console.error('❌ Create agency failed:', createResult.error);
+
       return false;
     }
     
@@ -44,6 +46,7 @@ export async function testXanoIntegration() {
     
     if (getResult.error) {
       console.error('❌ Get agency by ID failed:', getResult.error);
+
       return false;
     }
     
@@ -67,6 +70,7 @@ export async function testXanoIntegration() {
     
     if (transactionResult.error) {
       console.error('❌ Create transaction failed:', transactionResult.error);
+
       return false;
     }
     
@@ -80,6 +84,7 @@ export async function testXanoIntegration() {
     
     if (Math.abs(actualNetAmount - expectedNetAmount) > 0.001) {
       console.error('❌ Financial precision failed: expected', expectedNetAmount, 'got', actualNetAmount);
+
       return false;
     }
     
@@ -91,10 +96,12 @@ export async function testXanoIntegration() {
     await xanoClient.deleteAgency(testAgencyId);
     
     console.log('🎉 All tests passed! Xano integration working correctly.');
+
     return true;
     
   } catch (error) {
     console.error('💥 Test failed with exception:', error);
+
     return false;
   }
 }
@@ -103,10 +110,11 @@ export async function testXanoIntegration() {
 if (require.main === module) {
   testXanoIntegration()
     .then((success) => {
-      process.exit(success ? 0 : 1);
+      return process.exit(success ? 0 : 1);
     })
     .catch((error) => {
       console.error('Test runner error:', error);
-      process.exit(1);
+
+      return process.exit(1);
     });
 }
