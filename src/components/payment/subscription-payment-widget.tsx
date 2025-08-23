@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckoutWidget } from "thirdweb/react";
+import { CheckoutWidget, useActiveAccount } from "thirdweb/react";
 import { base, baseSepolia } from "thirdweb/chains";
 
 // USDC contract addresses
@@ -45,6 +45,9 @@ export function SubscriptionPaymentWidget({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showWidget, setShowWidget] = useState(false);
+  
+  // Get connected wallet
+  const account = useActiveAccount();
 
   // Calculate amount based on $0.001/creator for testing (was $40/creator)
   useEffect(() => {
@@ -55,7 +58,43 @@ export function SubscriptionPaymentWidget({
   const isValidCreators = creators >= 1 && creators <= 1000;
   const isValidAmount = amount > 0;
 
-  const handleSuccess = () => {
+  const handleSuccess = async (result?: any) => {
+    console.log('👑 Subscription payment SUCCESS:', {
+      amount,
+      creators,
+      agencyId,
+      account: account?.address,
+      result
+    });
+
+    // Update database with payment information
+    try {
+      console.log('💾 Updating database...');
+      const response = await fetch('/api/update-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount,
+          agencyId,
+          walletAddress: account?.address || 'unknown',
+          transactionHash: result?.transactionHash,
+          transactionType: 'subscription' as const
+        })
+      });
+
+      const updateResult = await response.json();
+      
+      if (response.ok) {
+        console.log('✅ Database updated successfully:', updateResult);
+      } else {
+        console.error('⚠️ Database update failed:', updateResult);
+      }
+    } catch (error) {
+      console.error('❌ Database update error:', error);
+    }
+
     setIsLoading(false);
     setError(null);
     setShowWidget(false);

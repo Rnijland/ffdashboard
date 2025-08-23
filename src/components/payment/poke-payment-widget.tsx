@@ -80,7 +80,8 @@ export function PokePaymentWidget({
           creatorId,
           walletAddress: account?.address || 'unknown',
           transactionHash: result?.transactionHash,
-          transactionType: 'poke' as const
+          transactionType: 'poke' as const,
+          message // Pass the poke message
         })
       });
 

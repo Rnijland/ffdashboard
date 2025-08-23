@@ -11,6 +11,7 @@ interface PaymentUpdateRequest {
   walletAddress: string;
   transactionHash?: string;
   transactionType: 'gems' | 'poke' | 'media' | 'subscription';
+  message?: string; // For poke messages
 }
 
 interface PaymentUpdateResponse {
@@ -141,11 +142,19 @@ export async function POST(request: NextRequest): Promise<NextResponse<PaymentUp
       metadata.message_count = paymentData.gems; // Gems = message credits
     } else if (paymentData.transactionType === 'poke') {
       metadata.message_count = 1;
+      metadata.type = 'poke';
+      if (paymentData.message) {
+        metadata.message = paymentData.message;
+      }
+    } else if (paymentData.transactionType === 'media') {
+      metadata.type = 'media';
+    } else if (paymentData.transactionType === 'subscription') {
+      metadata.type = 'subscription';
     }
 
     // Create transaction record
     const transactionData: CreateTransactionRequest = {
-      thirdweb_transaction_id: paymentData.transactionHash,
+      thirdweb_transaction_id: paymentData.transactionHash || `manual_${Date.now()}_${Math.random().toString(36).substring(7)}`,
       type: transactionTypeMap[paymentData.transactionType] || 'chat',
       amount: paymentData.amount,
       fee,
@@ -160,7 +169,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<PaymentUp
 
     console.log('💎 CREATING TRANSACTION:', {
       buyer: paymentData.walletAddress,
-      seller: process.env.NEXT_PUBLIC_SELLER_ADDRESS || 'unknown',
+      seller: '0xD27DDFA8a656432AE73695aF2c7306E22271bFA6',
       amount: `$${paymentData.amount}`,
       fee: `$${fee.toFixed(4)}`,
       netAmount: `$${netAmount.toFixed(4)}`,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckoutWidget } from "thirdweb/react";
+import { CheckoutWidget, useActiveAccount } from "thirdweb/react";
 import { base, baseSepolia } from "thirdweb/chains";
 
 // USDC contract addresses
@@ -51,6 +51,9 @@ export function MediaPaymentWidget({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showWidget, setShowWidget] = useState(false);
+  
+  // Get connected wallet
+  const account = useActiveAccount();
 
   // Validate amount is within range ($0.001-$210)
   const isValidAmount = amount >= 0.001 && amount <= 210;
@@ -65,7 +68,46 @@ export function MediaPaymentWidget({
     }
   };
 
-  const handleSuccess = () => {
+  const handleSuccess = async (result?: any) => {
+    console.log('🎬 Media payment SUCCESS:', {
+      amount,
+      mediaId,
+      accessType,
+      agencyId,
+      creatorId,
+      account: account?.address,
+      result
+    });
+
+    // Update database with payment information
+    try {
+      console.log('💾 Updating database...');
+      const response = await fetch('/api/update-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount,
+          agencyId,
+          creatorId,
+          walletAddress: account?.address || 'unknown',
+          transactionHash: result?.transactionHash,
+          transactionType: 'media' as const
+        })
+      });
+
+      const updateResult = await response.json();
+      
+      if (response.ok) {
+        console.log('✅ Database updated successfully:', updateResult);
+      } else {
+        console.error('⚠️ Database update failed:', updateResult);
+      }
+    } catch (error) {
+      console.error('❌ Database update error:', error);
+    }
+
     setIsLoading(false);
     setError(null);
     setShowWidget(false);
