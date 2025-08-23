@@ -43,9 +43,7 @@ export function WalletConnect() {
           label: "Connect Wallet",
         }}
         detailsButton={{
-          displayBalanceToken: {
-            [base.id]: base.nativeCurrency?.address || "0x", // Show ETH balance instead of USDC
-          },
+          // Let thirdweb handle balance display automatically
         }}
         switchButton={{
           label: "Wrong Network?",
