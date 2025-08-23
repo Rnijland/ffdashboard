@@ -17,32 +17,20 @@ import {
 } from '@/types/database';
 
 class XanoClient {
-  private baseUrl?: string;
-  private apiKey?: string;
-  private initialized = false;
+  private readonly baseUrl: string;
 
-  private initialize() {
-    if (this.initialized) return;
-    
-    this.baseUrl = process.env.XANO_API_URL;
-    this.apiKey = process.env.XANO_API_KEY;
+  constructor() {
+    this.baseUrl = process.env.XANO_API_URL!;
     
     if (!this.baseUrl) {
       throw new Error('Missing XANO_API_URL environment variable');
     }
-    if (!this.apiKey) {
-      throw new Error('Missing XANO_API_KEY environment variable');
-    }
-    
-    this.initialized = true;
   }
 
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<{ data?: T; error?: string }> {
-    this.initialize(); // Ensure client is initialized before making requests
-    
     const url = `${this.baseUrl}${endpoint}`;
     
     try {
@@ -50,7 +38,6 @@ class XanoClient {
         ...options,
         headers: {
           'Content-Type': 'application/json',
-          'X-API-KEY': this.apiKey!,
           ...options.headers,
         },
       });
