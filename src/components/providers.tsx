@@ -1,7 +1,6 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from 'next-themes';
 import { ThirdwebProvider } from 'thirdweb/react';
 import { useState, type ReactNode } from 'react';
@@ -29,7 +28,6 @@ export function Providers({ children }: { children: ReactNode }) {
           {children}
         </ThirdwebProvider>
       </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
