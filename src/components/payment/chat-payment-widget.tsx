@@ -14,7 +14,7 @@ import { Loader2 } from "lucide-react";
 // USDC contract address on Base mainnet
 const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 // Temporary seller address for demo purposes
-const SELLER_ADDRESS = "0x3328F5f2cEcAF00a2443082B657CedeC70efBbC9" as const;
+const SELLER_ADDRESS = "0xD27DDFA8a656432AE73695aF2c7306E22271bFA6" as const;
 
 // Gem packages with pricing
 const GEM_PACKAGES = [

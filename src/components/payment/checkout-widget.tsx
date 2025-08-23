@@ -14,7 +14,7 @@ import { useState } from "react";
 
 // Temporary seller address - in production this would come from environment
 // This is a demo address for testing purposes
-const SELLER_ADDRESS = "0x3328F5f2cEcAF00a2443082B657CedeC70efBbC9" as const;
+const SELLER_ADDRESS = "0xD27DDFA8a656432AE73695aF2c7306E22271bFA6" as const;
 
 // Transaction types based on data models
 export type TransactionType = 'chat' | 'script' | 'media' | 'subscription';
