@@ -50,12 +50,14 @@ function parseV2WebhookEvent(event: ThirdwebV2WebhookEvent): ProcessedWebhookEve
     // V2 events are arrays of transactions
     if (!event.data || !Array.isArray(event.data) || event.data.length === 0) {
       console.error('❌ No transaction data in v2 webhook:', event);
+      
       return null;
     }
 
     const transaction = event.data[0]; // Take the first transaction
     if (!transaction.data || transaction.type !== 'transaction') {
       console.error('❌ Invalid transaction data in v2 webhook:', transaction);
+      
       return null;
     }
 
@@ -70,6 +72,7 @@ function parseV2WebhookEvent(event: ThirdwebV2WebhookEvent): ProcessedWebhookEve
     const timestamp = new Date(event.timestamp);
     if (isNaN(timestamp.getTime())) {
       console.error('❌ Invalid timestamp in v2 webhook:', event.timestamp);
+      
       return null;
     }
 
@@ -92,6 +95,7 @@ function parseV2WebhookEvent(event: ThirdwebV2WebhookEvent): ProcessedWebhookEve
 
   } catch (error) {
     console.error('❌ Error parsing v2 webhook event:', error);
+    
     return null;
   }
 }
@@ -104,6 +108,7 @@ function parseLegacyWebhookEvent(event: ThirdwebLegacyWebhookEvent): ProcessedWe
     // Validate required fields
     if (!event.data?.id || !event.data?.amount || !event.data?.status) {
       console.error('❌ Missing required webhook fields:', event);
+      
       return null;
     }
 
@@ -111,6 +116,7 @@ function parseLegacyWebhookEvent(event: ThirdwebLegacyWebhookEvent): ProcessedWe
     const amount = parseFloat(event.data.amount);
     if (isNaN(amount)) {
       console.error('❌ Invalid amount in webhook:', event.data.amount);
+      
       return null;
     }
 
@@ -131,6 +137,7 @@ function parseLegacyWebhookEvent(event: ThirdwebLegacyWebhookEvent): ProcessedWe
         break;
       default:
         console.error('❌ Unknown webhook event type:', event.type);
+        
         return null;
     }
 
@@ -138,6 +145,7 @@ function parseLegacyWebhookEvent(event: ThirdwebLegacyWebhookEvent): ProcessedWe
     const timestamp = new Date(event.data.created_at);
     if (isNaN(timestamp.getTime())) {
       console.error('❌ Invalid timestamp in webhook:', event.data.created_at);
+      
       return null;
     }
 
@@ -155,6 +163,7 @@ function parseLegacyWebhookEvent(event: ThirdwebLegacyWebhookEvent): ProcessedWe
 
   } catch (error) {
     console.error('❌ Error parsing legacy webhook event:', error);
+    
     return null;
   }
 }
