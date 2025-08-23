@@ -60,7 +60,17 @@ export function ChatPaymentWidget({
   // Get connected wallet
   const account = useActiveAccount();
 
-  const handleSuccess = () => {
+  const handleSuccess = (result?: any) => {
+    console.log('🎉 Payment SUCCESS:', {
+      selectedPackage,
+      amount: selectedPackage.price,
+      gems: selectedPackage.gems,
+      agencyId,
+      creatorId,
+      account: account?.address,
+      result
+    });
+    
     setIsLoading(false);
     setError(null);
     setShowWidget(false);
@@ -75,7 +85,14 @@ export function ChatPaymentWidget({
     });
   };
 
-  const handleError = () => {
+  const handleError = (error?: any) => {
+    console.error('❌ Payment ERROR:', {
+      selectedPackage,
+      amount: selectedPackage.price,
+      account: account?.address,
+      error
+    });
+    
     setIsLoading(false);
     setError("Gem purchase failed. Please try again.");
     setShowWidget(false);
@@ -83,6 +100,19 @@ export function ChatPaymentWidget({
   };
 
   const openCheckout = () => {
+    console.log('🚀 Starting checkout:', {
+      selectedPackage,
+      amount: selectedPackage.price,
+      chain: CHAIN.name,
+      chainId: CHAIN.id,
+      seller: SELLER_ADDRESS,
+      buyer: account?.address,
+      tokenAddress: USDC_ADDRESS,
+      agencyId,
+      creatorId,
+      isTestnet: IS_TESTNET
+    });
+    
     setError(null);
     setIsLoading(true);
     setShowWidget(true);

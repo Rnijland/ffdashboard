@@ -45,6 +45,12 @@ export async function POST(request: NextRequest): Promise<NextResponse<WebhookRe
   const startTime = Date.now();
   let eventId = 'unknown';
   
+  console.log('🔔 WEBHOOK RECEIVED:', {
+    timestamp: new Date().toISOString(),
+    url: request.url,
+    method: request.method,
+  });
+  
   try {
     // Extract headers
     const headersList = await headers();
@@ -69,11 +75,15 @@ export async function POST(request: NextRequest): Promise<NextResponse<WebhookRe
 
     // Parse request body
     const body = await request.text();
+    console.log('📦 WEBHOOK BODY:', body);
+    
     let webhookEvent: ThirdwebWebhookEvent;
 
     try {
       webhookEvent = JSON.parse(body);
+      console.log('📋 PARSED WEBHOOK:', webhookEvent);
     } catch (error) {
+      console.error('❌ JSON Parse Error:', error);
       return NextResponse.json(
         { success: false, message: 'Invalid JSON payload', processed: false },
         { status: 400 }
