@@ -18,12 +18,17 @@ import {
 
 class XanoClient {
   private readonly baseUrl: string;
+  private readonly apiKey: string;
 
   constructor() {
     this.baseUrl = process.env.XANO_API_URL!;
+    this.apiKey = process.env.XANO_API_KEY!;
     
     if (!this.baseUrl) {
       throw new Error('Missing XANO_API_URL environment variable');
+    }
+    if (!this.apiKey) {
+      throw new Error('Missing XANO_API_KEY environment variable');
     }
   }
 
@@ -38,6 +43,7 @@ class XanoClient {
         ...options,
         headers: {
           'Content-Type': 'application/json',
+          'X-API-KEY': this.apiKey,
           ...options.headers,
         },
       });
@@ -99,6 +105,14 @@ return { error: `Network Error: ${error instanceof Error ? error.message : 'Unkn
 
   async getCreatorsByAgency(agencyId: number) {
     return this.request<Creator[]>(`/ff_creator?agency=${agencyId}`);
+  }
+
+  async findAgencyBySlug(slug: string) {
+    return this.request<Agency[]>(`/ff_agency?slug=${slug}`);
+  }
+
+  async findCreatorByUsername(username: string) {
+    return this.request<Creator[]>(`/ff_creator?username=${username}`);
   }
 
   async createCreator(data: CreateCreatorRequest) {
