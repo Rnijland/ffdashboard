@@ -104,8 +104,11 @@ export async function POST(request: NextRequest): Promise<NextResponse<PaymentUp
       : `payment_${paymentData.walletAddress}_${paymentData.amount}_${Date.now()}`;
 
     // Check for duplicate transaction
+    console.log('🔍 Checking for duplicate with idempotency key:', idempotencyKey);
     const existingTransaction = await xanoClient.getTransactionByIdempotencyKey(idempotencyKey);
-    if (existingTransaction.data) {
+    console.log('🔍 Existing transaction result:', JSON.stringify(existingTransaction, null, 2));
+    
+    if (existingTransaction.data && existingTransaction.data.id) {
       console.log('⚠️ Duplicate transaction detected:', idempotencyKey);
       return NextResponse.json({
         success: true,
