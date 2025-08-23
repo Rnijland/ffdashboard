@@ -105,7 +105,18 @@ export function ChatPaymentWidget({
         {!account && (
           <Alert className="bg-amber-50 border-amber-200">
             <AlertDescription>
-              👆 <strong>Connect your wallet</strong> using the button above to make payments
+              👆 <strong>Sign in with Google</strong> using the button above to make payments
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {account && (
+          <Alert className="bg-green-50 border-green-200">
+            <AlertDescription className="text-xs">
+              ✅ <strong>Connected:</strong> {account.address}<br/>
+              {account.address === "0xD27DDFA8a656432AE73695aF2c7306E22271bFA6" 
+                ? "🎉 This is your target wallet!" 
+                : "⚠️ Different wallet - may need to transfer ETH or switch accounts"}
             </AlertDescription>
           </Alert>
         )}

@@ -1,17 +1,22 @@
 "use client";
 
 import { ConnectButton, useActiveAccount, useConnectedWallets, useSetActiveWallet, useDisconnect, useActiveWallet } from "thirdweb/react";
-import { createWallet } from "thirdweb/wallets";
+import { createWallet, inAppWallet } from "thirdweb/wallets";
 import { base } from "thirdweb/chains";
 import { thirdwebClient } from "@/lib/client/thirdweb";
 import { Button } from "@/registry/new-york-v4/ui/button";
 
-// Configure external wallets only (connects to existing wallets)
+// Configure wallets with Google login FIRST
 const wallets = [
+  inAppWallet({
+    auth: {
+      options: ["google", "email", "phone"], // Google login like before!
+    },
+  }),
   createWallet("io.metamask"),
   createWallet("com.coinbase.wallet"), 
   createWallet("me.rainbow"),
-  createWallet("walletConnect"), // Normal WalletConnect - should work for thirdweb mobile
+  createWallet("walletConnect"),
 ];
 
 export function WalletConnect() {
@@ -33,7 +38,7 @@ export function WalletConnect() {
           showThirdwebBranding: false,
           welcomeScreen: {
             title: "Connect to FanFlow Payments",
-            subtitle: "Connect your existing wallet - MetaMask, Coinbase, Rainbow, or WalletConnect for thirdweb mobile",
+            subtitle: "Sign in with Google (recommended) or connect your existing wallet",
           },
         }}
         connectButton={{
