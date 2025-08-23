@@ -5,6 +5,7 @@ import localFont from 'next/font/local';
 
 import { ThemeProvider } from 'next-themes';
 import { ThirdwebProvider } from 'thirdweb/react';
+import { Header } from '@/components/layout/header';
 
 import '@/app/globals.css';
 import { Toaster } from '@/registry/new-york-v4/ui/sonner';
@@ -34,7 +35,10 @@ const Layout = ({ children }: Readonly<{ children: ReactNode }>) => {
                 className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground overscroll-none antialiased`}>
                 <ThemeProvider attribute='class'>
                     <ThirdwebProvider>
-                        {children}
+                        <Header />
+                        <main className="container mx-auto py-6">
+                            {children}
+                        </main>
                         <Toaster />
                     </ThirdwebProvider>
                 </ThemeProvider>
