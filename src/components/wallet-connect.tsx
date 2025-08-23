@@ -1,25 +1,21 @@
 "use client";
 
 import { ConnectButton, useActiveAccount, useConnectedWallets, useSetActiveWallet, useDisconnect, useActiveWallet } from "thirdweb/react";
-import { createWallet, walletConnect, inAppWallet } from "thirdweb/wallets";
+import { createWallet, walletConnect } from "thirdweb/wallets";
 import { base } from "thirdweb/chains";
 import { thirdwebClient } from "@/lib/client/thirdweb";
 import { Button } from "@/registry/new-york-v4/ui/button";
 
-// Configure supported wallets
+// Configure ONLY external wallets (no inAppWallet - connects to existing wallets)
 const wallets = [
-  // Standard wallets first (gives more control)
-  createWallet("io.metamask"),
-  createWallet("com.coinbase.wallet"),
-  walletConnect(),
-  createWallet("me.rainbow"),
-  createWallet("io.zerion.wallet"),
-  // thirdweb smart wallet
-  inAppWallet({
-    auth: {
-      options: ["google", "email", "phone"],
-    },
-  }),
+  // External wallets - these connect to EXISTING wallets, don't create new ones
+  createWallet("io.metamask"),           // MetaMask
+  createWallet("com.coinbase.wallet"),   // Coinbase Wallet  
+  createWallet("me.rainbow"),            // Rainbow
+  createWallet("io.zerion.wallet"),      // Zerion
+  createWallet("app.phantom"),           // Phantom
+  createWallet("io.rabby"),              // Rabby
+  walletConnect(),                       // WalletConnect (for thirdweb mobile app)
 ];
 
 export function WalletConnect() {
@@ -36,9 +32,13 @@ export function WalletConnect() {
         wallets={wallets}
         chains={[base]} // Focus on Base chain
         connectModal={{
-          size: "wide",
-          title: "Connect Your Wallet",
+          size: "wide", 
+          title: "Connect Your Existing Wallet",
           showThirdwebBranding: false,
+          welcomeScreen: {
+            title: "Connect to FanFlow Payments",
+            subtitle: "Connect your existing wallet (MetaMask, Rainbow, etc.) or use WalletConnect for thirdweb mobile app",
+          },
         }}
         connectButton={{
           label: "Connect Wallet",
