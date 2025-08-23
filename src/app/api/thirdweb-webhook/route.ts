@@ -84,6 +84,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<WebhookRe
       console.log('📋 PARSED WEBHOOK:', webhookEvent);
     } catch (error) {
       console.error('❌ JSON Parse Error:', error);
+      
       return NextResponse.json(
         { success: false, message: 'Invalid JSON payload', processed: false },
         { status: 400 }
