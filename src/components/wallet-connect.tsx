@@ -1,21 +1,17 @@
 "use client";
 
 import { ConnectButton, useActiveAccount, useConnectedWallets, useSetActiveWallet, useDisconnect, useActiveWallet } from "thirdweb/react";
-import { createWallet, walletConnect } from "thirdweb/wallets";
+import { createWallet } from "thirdweb/wallets";
 import { base } from "thirdweb/chains";
 import { thirdwebClient } from "@/lib/client/thirdweb";
 import { Button } from "@/registry/new-york-v4/ui/button";
 
-// Configure ONLY external wallets (no inAppWallet - connects to existing wallets)
+// Configure external wallets only (connects to existing wallets)
 const wallets = [
-  // External wallets - these connect to EXISTING wallets, don't create new ones
-  createWallet("io.metamask"),           // MetaMask
-  createWallet("com.coinbase.wallet"),   // Coinbase Wallet  
-  createWallet("me.rainbow"),            // Rainbow
-  createWallet("io.zerion.wallet"),      // Zerion
-  createWallet("app.phantom"),           // Phantom
-  createWallet("io.rabby"),              // Rabby
-  walletConnect(),                       // WalletConnect (for thirdweb mobile app)
+  createWallet("io.metamask"),
+  createWallet("com.coinbase.wallet"), 
+  createWallet("me.rainbow"),
+  createWallet("walletConnect"), // Normal WalletConnect - should work for thirdweb mobile
 ];
 
 export function WalletConnect() {
@@ -37,7 +33,7 @@ export function WalletConnect() {
           showThirdwebBranding: false,
           welcomeScreen: {
             title: "Connect to FanFlow Payments",
-            subtitle: "Connect your existing wallet (MetaMask, Rainbow, etc.) or use WalletConnect for thirdweb mobile app",
+            subtitle: "Connect your existing wallet - MetaMask, Coinbase, Rainbow, or WalletConnect for thirdweb mobile",
           },
         }}
         connectButton={{
