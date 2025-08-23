@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CheckoutWidget } from "thirdweb/react";
+import { CheckoutWidget, useActiveAccount } from "thirdweb/react";
 import { base, baseSepolia } from "thirdweb/chains";
-import { useActiveAccount } from "thirdweb/react";
 import { thirdwebClient } from "@/lib/client/thirdweb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/registry/new-york-v4/ui/card";
 import { Button } from "@/registry/new-york-v4/ui/button";

@@ -1,10 +1,9 @@
 "use client";
 
-import { ConnectButton } from "thirdweb/react";
+import { ConnectButton, useActiveAccount, useConnectedWallets, useSetActiveWallet, useDisconnect } from "thirdweb/react";
 import { createWallet, walletConnect, inAppWallet } from "thirdweb/wallets";
 import { base } from "thirdweb/chains";
 import { thirdwebClient } from "@/lib/client/thirdweb";
-import { useActiveAccount, useConnectedWallets, useSetActiveWallet, useDisconnect } from "thirdweb/react";
 import { Button } from "@/registry/new-york-v4/ui/button";
 
 // Configure supported wallets
@@ -45,7 +44,7 @@ export function WalletConnect() {
         }}
         detailsButton={{
           displayBalanceToken: {
-            [base.id]: base.nativeCurrency.address, // Show ETH balance instead of USDC
+            [base.id]: base.nativeCurrency?.address || "0x", // Show ETH balance instead of USDC
           },
         }}
         switchButton={{
