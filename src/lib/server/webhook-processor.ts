@@ -1,4 +1,4 @@
-import { ThirdwebWebhookEvent } from '@/app/api/thirdweb-webhook/route';
+import { ThirdwebV2WebhookEvent, ThirdwebLegacyWebhookEvent } from '@/app/api/thirdweb-webhook/route';
 
 export interface ProcessedWebhookEvent {
   eventId: string;
@@ -19,25 +19,99 @@ export interface ProcessedWebhookEvent {
 }
 
 /**
- * Parse and validate Thirdweb webhook event
+ * Parse and validate Thirdweb webhook event (supports both v2 and legacy)
  * @param event - Raw webhook event from Thirdweb
+ * @param isV2 - Whether this is a v2 (Insight) webhook
  * @returns Processed event data or null if invalid
  */
-export function parseWebhookEvent(event: ThirdwebWebhookEvent): ProcessedWebhookEvent | null {
+export function parseWebhookEvent(
+  event: ThirdwebV2WebhookEvent | ThirdwebLegacyWebhookEvent, 
+  isV2: boolean = false
+): ProcessedWebhookEvent | null {
+  try {
+    if (isV2) {
+      return parseV2WebhookEvent(event as ThirdwebV2WebhookEvent);
+    } else {
+      return parseLegacyWebhookEvent(event as ThirdwebLegacyWebhookEvent);
+    }
+
+  } catch (error) {
+    console.error('❌ Error parsing webhook event:', error);
+    
+return null;
+  }
+}
+
+/**
+ * Parse v2 (Insight) transaction webhook event
+ */
+function parseV2WebhookEvent(event: ThirdwebV2WebhookEvent): ProcessedWebhookEvent | null {
+  try {
+    // V2 events are arrays of transactions
+    if (!event.data || !Array.isArray(event.data) || event.data.length === 0) {
+      console.error('❌ No transaction data in v2 webhook:', event);
+      return null;
+    }
+
+    const transaction = event.data[0]; // Take the first transaction
+    if (!transaction.data || transaction.type !== 'transaction') {
+      console.error('❌ Invalid transaction data in v2 webhook:', transaction);
+      return null;
+    }
+
+    const txData = transaction.data;
+    
+    // For USDC transactions, value is in wei (6 decimals for USDC)
+    // Convert from wei to USDC (divide by 10^6)
+    const valueInWei = BigInt(txData.value || '0');
+    const amount = Number(valueInWei) / 1000000; // USDC has 6 decimals
+
+    // Parse timestamp
+    const timestamp = new Date(event.timestamp);
+    if (isNaN(timestamp.getTime())) {
+      console.error('❌ Invalid timestamp in v2 webhook:', event.timestamp);
+      return null;
+    }
+
+    return {
+      eventId: transaction.id,
+      eventType: 'transaction.completed',
+      transactionId: txData.transactionHash,
+      amount,
+      currency: 'USDC',
+      status: transaction.status === 'new' ? 'completed' : 'failed',
+      customerWalletAddress: txData.from,
+      metadata: {
+        transactionType: 'gems', // Assume gem purchase for now
+        blockNumber: txData.blockNumber,
+        gasUsed: txData.gasUsed,
+        gasPrice: txData.gasPrice
+      },
+      timestamp
+    };
+
+  } catch (error) {
+    console.error('❌ Error parsing v2 webhook event:', error);
+    return null;
+  }
+}
+
+/**
+ * Parse legacy payment webhook event
+ */
+function parseLegacyWebhookEvent(event: ThirdwebLegacyWebhookEvent): ProcessedWebhookEvent | null {
   try {
     // Validate required fields
     if (!event.data?.id || !event.data?.amount || !event.data?.status) {
       console.error('❌ Missing required webhook fields:', event);
-      
-return null;
+      return null;
     }
 
     // Parse amount to number
     const amount = parseFloat(event.data.amount);
     if (isNaN(amount)) {
       console.error('❌ Invalid amount in webhook:', event.data.amount);
-      
-return null;
+      return null;
     }
 
     // Map status to standardized values
@@ -57,16 +131,14 @@ return null;
         break;
       default:
         console.error('❌ Unknown webhook event type:', event.type);
-        
-return null;
+        return null;
     }
 
     // Parse timestamp
     const timestamp = new Date(event.data.created_at);
     if (isNaN(timestamp.getTime())) {
       console.error('❌ Invalid timestamp in webhook:', event.data.created_at);
-      
-return null;
+      return null;
     }
 
     return {
@@ -82,9 +154,8 @@ return null;
     };
 
   } catch (error) {
-    console.error('❌ Error parsing webhook event:', error);
-    
-return null;
+    console.error('❌ Error parsing legacy webhook event:', error);
+    return null;
   }
 }
 

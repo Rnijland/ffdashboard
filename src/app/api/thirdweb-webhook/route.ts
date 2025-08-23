@@ -18,8 +18,29 @@ import {
   logProcessingMetrics 
 } from '@/lib/server/webhook-idempotency';
 
-// Thirdweb webhook event types
-export interface ThirdwebWebhookEvent {
+// Thirdweb v2 webhook event types (Insight webhooks)
+export interface ThirdwebV2WebhookEvent {
+  topic: string;
+  timestamp: string;
+  data: {
+    data: {
+      transactionHash: string;
+      blockNumber: string;
+      from: string;
+      to: string;
+      value: string;
+      gasUsed: string;
+      gasPrice: string;
+      timestamp: string;
+    };
+    status: 'new' | 'reverted';
+    type: 'transaction';
+    id: string;
+  }[];
+}
+
+// Legacy payment webhook interface (for backward compatibility)
+export interface ThirdwebLegacyWebhookEvent {
   type: 'payment.completed' | 'payment.failed' | 'payment.pending' | 'payment.cancelled';
   data: {
     id: string;
@@ -43,7 +64,6 @@ interface WebhookResponse {
 
 export async function POST(request: NextRequest): Promise<NextResponse<WebhookResponse>> {
   const startTime = Date.now();
-  let eventId = 'unknown';
   
   console.log('🔔 WEBHOOK RECEIVED:', {
     timestamp: new Date().toISOString(),
@@ -52,10 +72,17 @@ export async function POST(request: NextRequest): Promise<NextResponse<WebhookRe
   });
   
   try {
-    // Extract headers
+    // Extract headers (support both v2 and legacy formats)
     const headersList = await headers();
-    const signature = headersList.get('x-signature');
+    const signature = headersList.get('x-webhook-signature') || headersList.get('x-signature');
+    const webhookId = headersList.get('x-webhook-id');
     const contentType = headersList.get('content-type');
+    
+    console.log('📋 WEBHOOK HEADERS:', {
+      signature: signature ? signature.substring(0, 16) + '...' : null,
+      webhookId,
+      contentType
+    });
 
     // Validate content type
     if (!contentType?.includes('application/json')) {
@@ -77,11 +104,16 @@ export async function POST(request: NextRequest): Promise<NextResponse<WebhookRe
     const body = await request.text();
     console.log('📦 WEBHOOK BODY:', body);
     
-    let webhookEvent: ThirdwebWebhookEvent;
+    let webhookEvent: ThirdwebV2WebhookEvent | ThirdwebLegacyWebhookEvent;
+    let isV2Webhook = false;
 
     try {
       webhookEvent = JSON.parse(body);
       console.log('📋 PARSED WEBHOOK:', webhookEvent);
+      
+      // Detect webhook version
+      isV2Webhook = 'topic' in webhookEvent && 'timestamp' in webhookEvent;
+      console.log('🔍 WEBHOOK VERSION:', isV2Webhook ? 'v2 (Insight)' : 'legacy (Payment)');
     } catch (error) {
       console.error('❌ JSON Parse Error:', error);
       
@@ -91,12 +123,23 @@ export async function POST(request: NextRequest): Promise<NextResponse<WebhookRe
       );
     }
 
-    // Validate required event structure
-    if (!webhookEvent.type || !webhookEvent.data?.id) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid webhook event structure', processed: false },
-        { status: 400 }
-      );
+    // Validate required event structure based on version
+    if (isV2Webhook) {
+      const v2Event = webhookEvent as ThirdwebV2WebhookEvent;
+      if (!v2Event.topic || !v2Event.data || !Array.isArray(v2Event.data)) {
+        return NextResponse.json(
+          { success: false, message: 'Invalid v2 webhook event structure', processed: false },
+          { status: 400 }
+        );
+      }
+    } else {
+      const legacyEvent = webhookEvent as ThirdwebLegacyWebhookEvent;
+      if (!legacyEvent.type || !legacyEvent.data?.id) {
+        return NextResponse.json(
+          { success: false, message: 'Invalid legacy webhook event structure', processed: false },
+          { status: 400 }
+        );
+      }
     }
 
     // Verify webhook signature
@@ -112,9 +155,13 @@ export async function POST(request: NextRequest): Promise<NextResponse<WebhookRe
 
     const isValidSignature = verifyWebhookSignature(body, signature, webhookSecret);
     if (!isValidSignature) {
+      const sigEventId = isV2Webhook 
+        ? (webhookEvent as ThirdwebV2WebhookEvent).data[0]?.id || 'unknown'
+        : (webhookEvent as ThirdwebLegacyWebhookEvent).data.id;
+        
       logSecurityEvent('INVALID_SIGNATURE', { 
-        eventId: webhookEvent.data.id,
-        signature: signature.substring(0, 16) + '...' // Log partial signature for debugging
+        eventId: sigEventId,
+        signature: signature?.substring(0, 16) + '...' // Log partial signature for debugging
       });
       
       return NextResponse.json(
@@ -124,11 +171,19 @@ export async function POST(request: NextRequest): Promise<NextResponse<WebhookRe
     }
 
     // Verify timestamp to prevent replay attacks
-    const isValidTimestamp = isValidWebhookTimestamp(webhookEvent.data.created_at);
+    const timestamp = isV2Webhook 
+      ? (webhookEvent as ThirdwebV2WebhookEvent).timestamp
+      : (webhookEvent as ThirdwebLegacyWebhookEvent).data.created_at;
+      
+    const isValidTimestamp = isValidWebhookTimestamp(timestamp);
     if (!isValidTimestamp) {
+      const tsEventId = isV2Webhook 
+        ? (webhookEvent as ThirdwebV2WebhookEvent).data[0]?.id || 'unknown'
+        : (webhookEvent as ThirdwebLegacyWebhookEvent).data.id;
+        
       logSecurityEvent('INVALID_TIMESTAMP', { 
-        eventId: webhookEvent.data.id,
-        timestamp: webhookEvent.data.created_at
+        eventId: tsEventId,
+        timestamp
       });
       
       return NextResponse.json(
@@ -137,13 +192,22 @@ export async function POST(request: NextRequest): Promise<NextResponse<WebhookRe
       );
     }
 
+    const currentEventId = isV2Webhook 
+      ? (webhookEvent as ThirdwebV2WebhookEvent).data[0]?.id || 'unknown'
+      : (webhookEvent as ThirdwebLegacyWebhookEvent).data.id;
+      
+    const eventType = isV2Webhook 
+      ? (webhookEvent as ThirdwebV2WebhookEvent).topic
+      : (webhookEvent as ThirdwebLegacyWebhookEvent).type;
+
     logSecurityEvent('WEBHOOK_AUTHENTICATED', { 
-      eventId: webhookEvent.data.id,
-      type: webhookEvent.type
+      eventId: currentEventId,
+      type: eventType,
+      version: isV2Webhook ? 'v2' : 'legacy'
     });
 
     // Parse webhook event
-    const processedEvent = parseWebhookEvent(webhookEvent);
+    const processedEvent = parseWebhookEvent(webhookEvent, isV2Webhook);
     if (!processedEvent) {
       return NextResponse.json(
         { success: false, message: 'Invalid webhook event data', processed: false },
@@ -151,13 +215,13 @@ export async function POST(request: NextRequest): Promise<NextResponse<WebhookRe
       );
     }
     
-    eventId = processedEvent.eventId;
+    const eventId = processedEvent.eventId;
 
     // Check if event has already been processed (idempotency)
-    const alreadyProcessed = await isEventAlreadyProcessed(eventId);
+    const alreadyProcessed = await isEventAlreadyProcessed(processedEvent.eventId);
     if (alreadyProcessed) {
-      console.log('🔄 Event already processed, returning success:', eventId);
-      logProcessingMetrics(eventId, Date.now() - startTime, true);
+      console.log('🔄 Event already processed, returning success:', processedEvent.eventId);
+      logProcessingMetrics(processedEvent.eventId, Date.now() - startTime, true);
       
       return NextResponse.json({
         success: true,
@@ -171,7 +235,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<WebhookRe
     logWebhookProcessing(processedEvent, databaseActions);
 
     // Execute database updates with retry logic
-    const databaseSuccess = await withRetry(async () => {
+    await withRetry(async () => {
       const result = await executeDatabaseActions(processedEvent, databaseActions);
       if (!result) {
         throw new Error('Database operations failed');
@@ -195,12 +259,13 @@ return result;
   } catch (error) {
     console.error('❌ Webhook processing error:', error);
     
-    // Mark event as failed if we have an eventId
-    if (eventId !== 'unknown') {
-      markEventAsProcessed(eventId, 'failure');
+    // Mark event as failed if we have a processedEvent
+    if (processedEvent?.eventId && processedEvent.eventId !== 'unknown') {
+      markEventAsProcessed(processedEvent.eventId, 'failure');
+      logProcessingMetrics(processedEvent.eventId, Date.now() - startTime, false);
+    } else {
+      logProcessingMetrics('unknown', Date.now() - startTime, false);
     }
-    
-    logProcessingMetrics(eventId, Date.now() - startTime, false);
     
     return NextResponse.json(
       { success: false, message: 'Internal server error', processed: false },
