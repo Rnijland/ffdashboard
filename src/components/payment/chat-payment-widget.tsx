@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckoutWidget } from "thirdweb/react";
 import { base, baseSepolia } from "thirdweb/chains";
+import { useActiveAccount, useWalletBalance } from "thirdweb/react";
 import { thirdwebClient } from "@/lib/client/thirdweb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/registry/new-york-v4/ui/card";
 import { Button } from "@/registry/new-york-v4/ui/button";
@@ -57,6 +58,14 @@ export function ChatPaymentWidget({
   const [error, setError] = useState<string | null>(null);
   const [showWidget, setShowWidget] = useState(false);
 
+  // Debug wallet connection
+  const account = useActiveAccount();
+  const { data: balance, isLoading: balanceLoading } = useWalletBalance({
+    client: thirdwebClient,
+    chain: CHAIN,
+    address: account?.address,
+  });
+
   const handleSuccess = () => {
     setIsLoading(false);
     setError(null);
@@ -98,6 +107,16 @@ export function ChatPaymentWidget({
             </AlertDescription>
           </Alert>
         )}
+
+        {/* Debug Info */}
+        <Alert className="bg-gray-50 border-gray-200">
+          <AlertDescription className="text-xs space-y-1">
+            <div><strong>Wallet:</strong> {account?.address || 'Not connected'}</div>
+            <div><strong>Chain:</strong> {CHAIN.name} ({CHAIN.id})</div>
+            <div><strong>Balance:</strong> {balanceLoading ? 'Loading...' : balance ? `${balance.displayValue} ${balance.symbol}` : 'No balance'}</div>
+            <div><strong>Expected:</strong> 0xD27DDFA8a656432AE73695aF2c7306E22271bFA6</div>
+          </AlertDescription>
+        </Alert>
 
         <div className="space-y-2">
           <Label>Select Gem Package</Label>
