@@ -45,23 +45,23 @@ export function MediaPaymentWidget({
   disabled = false,
   className = ""
 }: MediaPaymentWidgetProps) {
-  const [amount, setAmount] = useState<number>(mediaType === 'photo' ? 10 : 25);
+  const [amount, setAmount] = useState<number>(0.001);
   const [accessType, setAccessType] = useState<'permanent' | 'timed'>('permanent');
   const [accessDurationDays, setAccessDurationDays] = useState<number>(30);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showWidget, setShowWidget] = useState(false);
 
-  // Validate amount is within range ($10-$210)
-  const isValidAmount = amount >= 10 && amount <= 210;
+  // Validate amount is within range ($0.001-$210)
+  const isValidAmount = amount >= 0.001 && amount <= 210;
 
   // Auto-adjust price based on access type and media type
   const handleAccessTypeChange = (value: 'permanent' | 'timed') => {
     setAccessType(value);
     if (value === 'permanent') {
-      setAmount(mediaType === 'photo' ? 50 : 100); // Higher for permanent access
+      setAmount(mediaType === 'photo' ? 0.01 : 0.05); // Higher for permanent access
     } else {
-      setAmount(mediaType === 'photo' ? 10 : 25); // Lower for timed access
+      setAmount(mediaType === 'photo' ? 0.001 : 0.005); // Lower for timed access
     }
   };
 
@@ -92,7 +92,7 @@ export function MediaPaymentWidget({
 
   const openCheckout = () => {
     if (!isValidAmount) {
-      setError("Amount must be between $10 and $210");
+      setError("Amount must be between $0.001 and $210");
 
       return;
     }
@@ -157,15 +157,15 @@ export function MediaPaymentWidget({
           <Input
             id="amount"
             type="number"
-            min="10"
+            min="0.001"
             max="210"
-            step="5"
+            step="0.001"
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
-            placeholder="Enter amount ($10-$210)"
+            placeholder="Enter amount ($0.001-$210)"
           />
           {!isValidAmount && (
-            <p className="text-sm text-destructive">Amount must be between $10 and $210</p>
+            <p className="text-sm text-destructive">Amount must be between $0.001 and $210</p>
           )}
           <p className="text-xs text-muted-foreground">
             {accessType === 'permanent' 

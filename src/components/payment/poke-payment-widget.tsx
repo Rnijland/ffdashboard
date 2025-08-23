@@ -40,17 +40,17 @@ export function PokePaymentWidget({
   disabled = false,
   className = ""
 }: PokePaymentWidgetProps) {
-  const [amount, setAmount] = useState<number>(5);
+  const [amount, setAmount] = useState<number>(0.001);
   const [message, setMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showWidget, setShowWidget] = useState(false);
 
-  // Validate amount is within range ($5-$525)
-  const isValidAmount = amount >= 5 && amount <= 525;
+  // Validate amount is within range ($0.001-$525)
+  const isValidAmount = amount >= 0.001 && amount <= 525;
 
   // Preset amounts for pokes
-  const presetAmounts = [5, 10, 25, 50, 100, 200];
+  const presetAmounts = [0.001, 0.005, 0.01, 5, 10, 25, 50, 100, 200];
 
   const handleSuccess = () => {
     setIsLoading(false);
@@ -79,7 +79,7 @@ export function PokePaymentWidget({
 
   const openCheckout = () => {
     if (!isValidAmount) {
-      setError("Amount must be between $5 and $525");
+      setError("Amount must be between $0.001 and $525");
 
       return;
     }
@@ -118,15 +118,15 @@ export function PokePaymentWidget({
           <Input
             id="amount"
             type="number"
-            min="5"
+            min="0.001"
             max="525"
-            step="1"
+            step="0.001"
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
-            placeholder="Enter amount ($5-$525)"
+            placeholder="Enter amount ($0.001-$525)"
           />
           {!isValidAmount && (
-            <p className="text-sm text-destructive">Amount must be between $5 and $525</p>
+            <p className="text-sm text-destructive">Amount must be between $0.001 and $525</p>
           )}
         </div>
 

@@ -46,9 +46,9 @@ export function SubscriptionPaymentWidget({
   const [error, setError] = useState<string | null>(null);
   const [showWidget, setShowWidget] = useState(false);
 
-  // Calculate amount based on $40/creator
+  // Calculate amount based on $0.01/creator for testing (was $40/creator)
   useEffect(() => {
-    setAmount(creators * 40);
+    setAmount(creators * 0.01);
   }, [creators]);
 
   // Validate creators count is reasonable
@@ -124,7 +124,7 @@ export function SubscriptionPaymentWidget({
             <p className="text-sm text-destructive">Number of creators must be between 1 and 1000</p>
           )}
           <p className="text-xs text-muted-foreground">
-            Each creator costs $40/month. You currently have {creatorsCount} creator{creatorsCount !== 1 ? 's' : ''}.
+            TEST MODE: Each creator costs $0.01/month (was $40). You currently have {creatorsCount} creator{creatorsCount !== 1 ? 's' : ''}.
           </p>
         </div>
 

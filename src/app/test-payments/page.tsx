@@ -78,7 +78,7 @@ export default function TestPaymentsPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Packages:</strong> 10 gems ($1) to 4525 gems ($499.99)
+                  <strong>Packages:</strong> 1 gem ($0.001) to 4525 gems ($499.99)
                 </p>
                 <p className="text-sm text-muted-foreground">
                   <strong>Use Case:</strong> Buy gems for chat system
@@ -88,7 +88,7 @@ export default function TestPaymentsPage() {
                 </p>
                 <p className="text-sm text-muted-foreground">
                   <strong>Test Cases:</strong>
-                  <br />• Try $1 test package (10 gems)
+                  <br />• Try $0.001 ultra-test package (1 gem)
                   <br />• Test different gem packages
                   <br />• Verify USDC payment works
                   <br />• Test onramp functionality
@@ -112,7 +112,7 @@ export default function TestPaymentsPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Range:</strong> $5 - $525
+                  <strong>Range:</strong> $0.001 - $525
                 </p>
                 <p className="text-sm text-muted-foreground">
                   <strong>Use Case:</strong> Send a poke with optional message
@@ -122,8 +122,8 @@ export default function TestPaymentsPage() {
                 </p>
                 <p className="text-sm text-muted-foreground">
                   <strong>Test Cases:</strong>
-                  <br />• Test preset amounts: $5, $10, $25, $50, $100, $200
-                  <br />• Test custom amounts with validation (min $5)
+                  <br />• Test preset amounts: $0.001, $0.005, $0.01, $5, $10, $25
+                  <br />• Test custom amounts with validation (min $0.001)
                   <br />• Test with and without messages
                 </p>
               </CardContent>
@@ -147,7 +147,7 @@ export default function TestPaymentsPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Range:</strong> $10 - $210
+                  <strong>Range:</strong> $0.001 - $210
                 </p>
                 <p className="text-sm text-muted-foreground">
                   <strong>Use Case:</strong> Unlock photos/videos with permanent or timed access
@@ -159,7 +159,7 @@ export default function TestPaymentsPage() {
                   <strong>Test Cases:</strong>
                   <br />• Test permanent vs timed access
                   <br />• Test photo vs video pricing
-                  <br />• Try amounts below $10 and above $210
+                  <br />• Try ultra-cheap amounts: $0.001 (timed) $0.01 (permanent)
                   <br />• Test duration selection for timed access
                 </p>
               </CardContent>
@@ -181,7 +181,7 @@ export default function TestPaymentsPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Formula:</strong> $40 per creator per month
+                  <strong>Formula:</strong> $0.01 per creator per month (TEST MODE - was $40)
                 </p>
                 <p className="text-sm text-muted-foreground">
                   <strong>Use Case:</strong> Monthly subscription for agency creator management
@@ -191,9 +191,9 @@ export default function TestPaymentsPage() {
                 </p>
                 <p className="text-sm text-muted-foreground">
                   <strong>Test Cases:</strong>
-                  <br />• Test with 1 creator ($40)
-                  <br />• Test with 10 creators ($400)
-                  <br />• Test with 100 creators ($4000)
+                  <br />• Test with 1 creator ($0.01)
+                  <br />• Test with 10 creators ($0.10)
+                  <br />• Test with 100 creators ($1.00)
                   <br />• Test validation for 0 or negative creators
                 </p>
               </CardContent>
