@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CheckoutWidget } from "thirdweb/react";
-import { base } from "thirdweb/chains";
+import { base, baseSepolia } from "thirdweb/chains";
 import { thirdwebClient } from "@/lib/client/thirdweb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/registry/new-york-v4/ui/card";
 import { Button } from "@/registry/new-york-v4/ui/button";
@@ -11,15 +11,23 @@ import { Input } from "@/registry/new-york-v4/ui/input";
 import { Label } from "@/registry/new-york-v4/ui/label";
 import { Loader2 } from "lucide-react";
 
-// USDC contract address on Base mainnet
-const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+// USDC contract addresses
+const USDC_MAINNET = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"; // Base mainnet
+const USDC_TESTNET = "0x26df8d79c4faca88d0212f0bd7c4a4d1e8955f0e"; // Base Sepolia testnet
+
+// Environment-based configuration
+const IS_TESTNET = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_USE_TESTNET === 'true';
+const CHAIN = IS_TESTNET ? baseSepolia : base;
+const USDC_ADDRESS = IS_TESTNET ? USDC_TESTNET : USDC_MAINNET;
 // Temporary seller address for demo purposes
 const SELLER_ADDRESS = "0xD27DDFA8a656432AE73695aF2c7306E22271bFA6" as const;
 
 // Gem packages with pricing
 const GEM_PACKAGES = [
-  { gems: 1, price: 0.01 }, // Super cheap test package
-  { gems: 10, price: 0.10 }, // Cheap test package
+  { gems: 1, price: 0.001 }, // Ultra test package (0.1 cent)
+  { gems: 5, price: 0.005 }, // Mini test package (0.5 cent)
+  { gems: 10, price: 0.01 }, // Super cheap test package
+  { gems: 50, price: 0.10 }, // Cheap test package
   { gems: 135, price: 19.99 },
   { gems: 380, price: 49.99 },
   { gems: 775, price: 99.99 },
@@ -83,6 +91,14 @@ export function ChatPaymentWidget({
         <CardTitle className="text-center">Buy Gems for Chat</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {IS_TESTNET && (
+          <Alert className="bg-blue-50 border-blue-200">
+            <AlertDescription>
+              🧪 <strong>Test Mode:</strong> Using Base Sepolia testnet (free testing)
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="space-y-2">
           <Label>Select Gem Package</Label>
           <div className="grid grid-cols-2 gap-2">
@@ -123,7 +139,7 @@ export function ChatPaymentWidget({
           <div className="checkout-widget-container">
             <CheckoutWidget
               client={thirdwebClient}
-              chain={base}
+              chain={CHAIN}
               tokenAddress={USDC_ADDRESS}
               amount={selectedPackage.price.toString()}
               seller={SELLER_ADDRESS}

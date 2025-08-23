@@ -1,10 +1,16 @@
 "use client";
 
 import { CheckoutWidget } from "thirdweb/react";
-import { base } from "thirdweb/chains";
+import { base, baseSepolia } from "thirdweb/chains";
 
-// USDC contract address on Base mainnet
-const USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+// USDC contract addresses
+const USDC_MAINNET = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"; // Base mainnet
+const USDC_TESTNET = "0x26df8d79c4faca88d0212f0bd7c4a4d1e8955f0e"; // Base Sepolia testnet
+
+// Environment-based configuration
+const IS_TESTNET = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_USE_TESTNET === 'true';
+const CHAIN = IS_TESTNET ? baseSepolia : base;
+const USDC_ADDRESS = IS_TESTNET ? USDC_TESTNET : USDC_MAINNET;
 import { thirdwebClient } from "@/lib/client/thirdweb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/registry/new-york-v4/ui/card";
 import { Button } from "@/registry/new-york-v4/ui/button";
@@ -166,7 +172,7 @@ export function CheckoutWidgetWrapper({
           <div className="checkout-widget-container">
             <CheckoutWidget
               client={thirdwebClient}
-              chain={base}
+              chain={CHAIN}
               tokenAddress={USDC_ADDRESS}
               amount={amount.toString()}
               seller={SELLER_ADDRESS}
