@@ -78,6 +78,7 @@ export function SubscriptionPaymentWidget({
         body: JSON.stringify({
           amount,
           agencyId,
+          creatorId: undefined, // Subscriptions are agency-level, no specific creator
           walletAddress: account?.address || 'unknown',
           transactionHash: result?.transactionHash,
           transactionType: 'subscription' as const
