@@ -171,7 +171,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<PaymentUp
     });
 
     // Create transaction in Xano database
+    console.log('🔄 About to call Xano createTransaction with:', JSON.stringify(transactionData, null, 2));
     const transactionResult = await xanoClient.createTransaction(transactionData);
+    console.log('🔄 Xano createTransaction result:', JSON.stringify(transactionResult, null, 2));
     
     if (transactionResult.error || !transactionResult.data) {
       console.error('❌ Failed to create transaction:', transactionResult.error);
@@ -182,7 +184,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<PaymentUp
     }
 
     const transaction = transactionResult.data;
-    console.log('✅ Transaction created in database:', transaction.id);
+    console.log('✅ Transaction created in database:', transaction);
+    console.log('✅ Transaction ID type:', typeof transaction.id, 'Value:', transaction.id);
     
     // Create webhook event record for audit trail
     const webhookEventData: CreateWebhookEventRequest = {
