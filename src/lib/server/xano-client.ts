@@ -1,6 +1,6 @@
 /**
  * Xano API Client - Server-only wrapper for secure database operations
- * CRITICAL: Never expose XANO_API_KEY to client-side code
+ * Uses only XANO_API_URL environment variable
  */
 
 import {
