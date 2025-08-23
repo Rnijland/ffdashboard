@@ -1,6 +1,6 @@
 "use client";
 
-import { ConnectButton, useActiveAccount, useConnectedWallets, useSetActiveWallet, useDisconnect } from "thirdweb/react";
+import { ConnectButton, useActiveAccount, useConnectedWallets, useSetActiveWallet, useDisconnect, useActiveWallet } from "thirdweb/react";
 import { createWallet, walletConnect, inAppWallet } from "thirdweb/wallets";
 import { base } from "thirdweb/chains";
 import { thirdwebClient } from "@/lib/client/thirdweb";
@@ -24,6 +24,7 @@ const wallets = [
 
 export function WalletConnect() {
   const activeAccount = useActiveAccount();
+  const activeWallet = useActiveWallet();
   const connectedWallets = useConnectedWallets();
   const setActiveWallet = useSetActiveWallet();
   const { disconnect } = useDisconnect();
@@ -82,7 +83,7 @@ export function WalletConnect() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => disconnect()}
+          onClick={() => activeWallet && disconnect(activeWallet)}
           className="text-xs text-muted-foreground hover:text-foreground"
         >
           Disconnect
