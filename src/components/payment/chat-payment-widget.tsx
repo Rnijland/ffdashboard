@@ -60,7 +60,7 @@ export function ChatPaymentWidget({
   // Get connected wallet
   const account = useActiveAccount();
 
-  const handleSuccess = (result?: any) => {
+  const handleSuccess = async (result?: any) => {
     console.log('🎉 Payment SUCCESS:', {
       selectedPackage,
       amount: selectedPackage.price,
@@ -70,10 +70,44 @@ export function ChatPaymentWidget({
       account: account?.address,
       result
     });
+
+    // Update database with payment information
+    try {
+      console.log('💾 Updating database...');
+      const response = await fetch('/api/update-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: selectedPackage.price,
+          gems: selectedPackage.gems,
+          agencyId,
+          creatorId,
+          walletAddress: account?.address || 'unknown',
+          transactionHash: result?.transactionHash,
+          transactionType: 'gems' as const
+        })
+      });
+
+      const updateResult = await response.json();
+      
+      if (response.ok) {
+        console.log('✅ Database updated successfully:', updateResult);
+      } else {
+        console.error('⚠️ Database update failed:', updateResult);
+        // Don't fail the payment, just log the error
+      }
+    } catch (error) {
+      console.error('❌ Database update error:', error);
+      // Don't fail the payment, just log the error
+    }
     
     setIsLoading(false);
     setError(null);
     setShowWidget(false);
+    
+    // Call the parent success handler
     onSuccess?.({
       transactionType: 'gems',
       amount: selectedPackage.price,

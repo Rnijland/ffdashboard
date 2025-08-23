@@ -72,6 +72,7 @@ export interface Transaction {
   agency: number; // Foreign key to ff_agency
   creator?: number; // Foreign key to ff_creator
   subscriber_email?: string;
+  wallet_address?: string; // Buyer's wallet address
   metadata: TransactionMetadata;
   idempotency_key: string;
   created_at: number; // Xano epochms
@@ -151,6 +152,7 @@ export interface CreateTransactionRequest {
   agency: number;
   creator?: number;
   subscriber_email?: string;
+  wallet_address?: string;
   metadata?: TransactionMetadata;
   idempotency_key: string;
 }

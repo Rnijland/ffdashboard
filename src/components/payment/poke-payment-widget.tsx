@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckoutWidget } from "thirdweb/react";
+import { CheckoutWidget, useActiveAccount } from "thirdweb/react";
 import { base, baseSepolia } from "thirdweb/chains";
 
 // USDC contract addresses
@@ -46,22 +46,63 @@ export function PokePaymentWidget({
   const [error, setError] = useState<string | null>(null);
   const [showWidget, setShowWidget] = useState(false);
 
+  // Get connected wallet
+  const account = useActiveAccount();
+
   // Validate amount is within range ($0.001-$525)
   const isValidAmount = amount >= 0.001 && amount <= 525;
 
   // Preset amounts for pokes
   const presetAmounts = [0.001, 0.005, 0.01, 5, 10, 25, 50, 100, 200];
 
-  const handleSuccess = () => {
+  const handleSuccess = async (result?: any) => {
+    console.log('💕 Poke SUCCESS:', {
+      amount,
+      message,
+      agencyId,
+      creatorId,
+      account: account?.address,
+      result
+    });
+
+    // Update database with payment information
+    try {
+      console.log('💾 Updating database...');
+      const response = await fetch('/api/update-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount,
+          gems: 0, // Pokes don't give gems
+          agencyId,
+          creatorId,
+          walletAddress: account?.address || 'unknown',
+          transactionHash: result?.transactionHash,
+          transactionType: 'poke' as const
+        })
+      });
+
+      const updateResult = await response.json();
+      
+      if (response.ok) {
+        console.log('✅ Database updated successfully:', updateResult);
+      } else {
+        console.error('⚠️ Database update failed:', updateResult);
+      }
+    } catch (error) {
+      console.error('❌ Database update error:', error);
+    }
+
     setIsLoading(false);
     setError(null);
     setShowWidget(false);
     onSuccess?.({
-      transactionType: 'chat',
+      transactionType: 'poke',
       amount,
       metadata: {
         message_count: 1,
-        chat_duration: 0,
         type: 'poke',
         message: message
       },
