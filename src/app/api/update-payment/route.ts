@@ -101,7 +101,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<PaymentUp
     // Generate idempotency key for duplicate prevention
     const idempotencyKey = paymentData.transactionHash 
       ? `tx_${paymentData.transactionHash}` 
-      : `payment_${paymentData.walletAddress}_${paymentData.amount}_${Date.now()}`;
+      : `payment_${paymentData.transactionType}_${paymentData.walletAddress}_${paymentData.amount}_${Date.now()}`;
 
     // Check for duplicate transaction
     const existingTransaction = await xanoClient.getTransactionByIdempotencyKey(idempotencyKey);
