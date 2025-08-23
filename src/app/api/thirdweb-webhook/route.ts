@@ -165,7 +165,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<WebhookRe
       if (!result) {
         throw new Error('Database operations failed');
       }
-      return result;
+      
+return result;
     }, 3, 1000);
     
     // Mark event as successfully processed

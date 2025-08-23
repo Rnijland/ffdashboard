@@ -128,7 +128,8 @@ export async function updateTransactionStatus(event: ProcessedWebhookEvent): Pro
       
       if (result.error) {
         console.error('❌ Failed to create transaction:', result.error);
-        return false;
+        
+return false;
       }
       
       console.log('✅ Created new transaction:', {
@@ -141,7 +142,8 @@ export async function updateTransactionStatus(event: ProcessedWebhookEvent): Pro
     return true;
   } catch (error) {
     console.error('❌ Error updating transaction status:', error);
-    return false;
+    
+return false;
   }
 }
 
@@ -170,7 +172,8 @@ export async function createWebhookEventLog(event: ProcessedWebhookEvent): Promi
     
     if (result.error) {
       console.error('❌ Failed to create webhook event log:', result.error);
-      return false;
+      
+return false;
     }
     
     console.log('✅ Created webhook event log:', {
@@ -181,7 +184,8 @@ export async function createWebhookEventLog(event: ProcessedWebhookEvent): Promi
     return true;
   } catch (error) {
     console.error('❌ Error creating webhook event log:', error);
-    return false;
+    
+return false;
   }
 }
 
@@ -194,18 +198,21 @@ export async function updateUserGemBalance(event: ProcessedWebhookEvent): Promis
   try {
     if (event.metadata.transactionType !== 'gems' || !event.metadata.gems_purchased) {
       console.warn('⚠️ Not a gem purchase, skipping balance update');
-      return true;
+      
+return true;
     }
     
     if (event.status !== 'completed') {
       console.warn('⚠️ Payment not completed, skipping balance update');
-      return true;
+      
+return true;
     }
     
     const gemsToAdd = Number(event.metadata.gems_purchased);
     if (isNaN(gemsToAdd) || gemsToAdd <= 0) {
       console.error('❌ Invalid gems amount:', event.metadata.gems_purchased);
-      return false;
+      
+return false;
     }
     
     // TODO: Implement user gem balance update
@@ -220,7 +227,8 @@ export async function updateUserGemBalance(event: ProcessedWebhookEvent): Promis
     return true;
   } catch (error) {
     console.error('❌ Error updating user gem balance:', error);
-    return false;
+    
+return false;
   }
 }
 
@@ -245,7 +253,8 @@ export async function handlePaymentFailure(event: ProcessedWebhookEvent): Promis
     return true;
   } catch (error) {
     console.error('❌ Error handling payment failure:', error);
-    return false;
+    
+return false;
   }
 }
 
@@ -270,7 +279,8 @@ export async function handlePaymentCancellation(event: ProcessedWebhookEvent): P
     return true;
   } catch (error) {
     console.error('❌ Error handling payment cancellation:', error);
-    return false;
+    
+return false;
   }
 }
 

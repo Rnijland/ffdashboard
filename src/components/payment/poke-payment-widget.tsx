@@ -74,6 +74,7 @@ export function PokePaymentWidget({
   const openCheckout = () => {
     if (!isValidAmount) {
       setError("Amount must be between $5 and $525");
+
       return;
     }
     setError(null);

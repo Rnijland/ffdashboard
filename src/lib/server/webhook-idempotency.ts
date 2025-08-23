@@ -27,7 +27,8 @@ export async function isEventAlreadyProcessed(eventId: string): Promise<boolean>
         result: cached.result,
         age: Date.now() - cached.timestamp
       });
-      return cached.processed;
+      
+return cached.processed;
     }
 
     // Check database for webhook event record
@@ -59,6 +60,7 @@ export async function isEventAlreadyProcessed(eventId: string): Promise<boolean>
     console.error('❌ Error checking event idempotency:', error);
     // In case of error, allow processing to continue
     // Better to process twice than miss a payment
+    
     return false;
   }
 }

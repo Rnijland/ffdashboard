@@ -32,7 +32,8 @@ export function verifyWebhookSignature(
     return timingSafeEqual(expectedBuffer, actualBuffer);
   } catch (error) {
     console.error('Webhook signature verification error:', error);
-    return false;
+    
+return false;
   }
 }
 
@@ -50,7 +51,8 @@ export function isValidWebhookTimestamp(timestamp: string): boolean {
     return Math.abs(currentTime - webhookTime) <= fiveMinutes;
   } catch (error) {
     console.error('Timestamp validation error:', error);
-    return false;
+    
+return false;
   }
 }
 

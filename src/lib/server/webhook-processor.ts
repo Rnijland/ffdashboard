@@ -28,14 +28,16 @@ export function parseWebhookEvent(event: ThirdwebWebhookEvent): ProcessedWebhook
     // Validate required fields
     if (!event.data?.id || !event.data?.amount || !event.data?.status) {
       console.error('❌ Missing required webhook fields:', event);
-      return null;
+      
+return null;
     }
 
     // Parse amount to number
     const amount = parseFloat(event.data.amount);
     if (isNaN(amount)) {
       console.error('❌ Invalid amount in webhook:', event.data.amount);
-      return null;
+      
+return null;
     }
 
     // Map status to standardized values
@@ -55,14 +57,16 @@ export function parseWebhookEvent(event: ThirdwebWebhookEvent): ProcessedWebhook
         break;
       default:
         console.error('❌ Unknown webhook event type:', event.type);
-        return null;
+        
+return null;
     }
 
     // Parse timestamp
     const timestamp = new Date(event.data.created_at);
     if (isNaN(timestamp.getTime())) {
       console.error('❌ Invalid timestamp in webhook:', event.data.created_at);
-      return null;
+      
+return null;
     }
 
     return {
@@ -79,7 +83,8 @@ export function parseWebhookEvent(event: ThirdwebWebhookEvent): ProcessedWebhook
 
   } catch (error) {
     console.error('❌ Error parsing webhook event:', error);
-    return null;
+    
+return null;
   }
 }
 
