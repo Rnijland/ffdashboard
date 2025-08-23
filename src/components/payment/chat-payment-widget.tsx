@@ -18,7 +18,8 @@ const SELLER_ADDRESS = "0xD27DDFA8a656432AE73695aF2c7306E22271bFA6" as const;
 
 // Gem packages with pricing
 const GEM_PACKAGES = [
-  { gems: 10, price: 1.00 }, // Test package
+  { gems: 1, price: 0.01 }, // Super cheap test package
+  { gems: 10, price: 0.10 }, // Cheap test package
   { gems: 135, price: 19.99 },
   { gems: 380, price: 49.99 },
   { gems: 775, price: 99.99 },
