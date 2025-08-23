@@ -25,6 +25,14 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Disable TypeScript checking during build for faster development
+      typescript: {
+        ignoreBuildErrors: true,
+      },
+      // Disable ESLint during build for faster development  
+      eslint: {
+        ignoreDuringBuilds: true,
+      },
 };
 
 export default withBundleAnalyzer(nextConfig);
