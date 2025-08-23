@@ -42,6 +42,7 @@ export interface ChatPaymentWidgetProps {
   onError?: (error: Error) => void;
   disabled?: boolean;
   className?: string;
+  testMode?: boolean; // Enable fiat onramp testing
 }
 
 export function ChatPaymentWidget({
@@ -50,7 +51,8 @@ export function ChatPaymentWidget({
   onSuccess,
   onError,
   disabled = false,
-  className = ""
+  className = "",
+  testMode = false
 }: ChatPaymentWidgetProps) {
   const [selectedPackage, setSelectedPackage] = useState(GEM_PACKAGES[0]);
   const [isLoading, setIsLoading] = useState(false);
@@ -166,6 +168,15 @@ export function ChatPaymentWidget({
           </Alert>
         )}
 
+        {testMode && (
+          <Alert className="bg-purple-50 border-purple-200">
+            <AlertDescription>
+              💳 <strong>Fiat Test Mode:</strong> Credit card payments are in sandbox mode - no real money charged!<br/>
+              <span className="text-xs">Tip: Click "Secured by Coinbase" 10x for mock mode</span>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {!account && (
           <Alert className="bg-amber-50 border-amber-200">
             <AlertDescription>
@@ -244,6 +255,7 @@ export function ChatPaymentWidget({
               paymentMethods={["crypto", "card"]}
               currency="USD"
               theme="light"
+              testMode={testMode} // Enable fiat onramp testing
             />
           </div>
         )}

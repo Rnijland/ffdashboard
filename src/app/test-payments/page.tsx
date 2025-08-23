@@ -8,10 +8,14 @@ import { SubscriptionPaymentWidget } from "@/components/payment/subscription-pay
 import { Card, CardContent, CardHeader, CardTitle } from "@/registry/new-york-v4/ui/card";
 import { Alert, AlertDescription } from "@/registry/new-york-v4/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/registry/new-york-v4/ui/tabs";
+import { Button } from "@/registry/new-york-v4/ui/button";
+import { Switch } from "@/registry/new-york-v4/ui/switch";
+import { Label } from "@/registry/new-york-v4/ui/label";
 
 export default function TestPaymentsPage() {
   const [lastResult, setLastResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [fiatTestMode, setFiatTestMode] = useState(false);
 
   const handleSuccess = (result: any) => {
     setLastResult(result);
@@ -29,9 +33,36 @@ export default function TestPaymentsPage() {
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-center mb-2">Payment Widgets Test Page</h1>
-        <p className="text-muted-foreground text-center">
+        <p className="text-muted-foreground text-center mb-4">
           Test all payment widget types with proper validation and metadata
         </p>
+        
+        {/* Fiat Test Mode Toggle */}
+        <Card className="mb-4 max-w-md mx-auto">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="fiat-test-mode">💳 Fiat Test Mode</Label>
+                <p className="text-sm text-muted-foreground">
+                  Enable credit card sandbox testing (no real money charged)
+                </p>
+              </div>
+              <Switch
+                id="fiat-test-mode"
+                checked={fiatTestMode}
+                onCheckedChange={setFiatTestMode}
+              />
+            </div>
+            {fiatTestMode && (
+              <Alert className="mt-3 bg-purple-50 border-purple-200">
+                <AlertDescription className="text-xs">
+                  <strong>Fiat test mode enabled!</strong> All widgets now support sandbox credit card payments.<br/>
+                  <strong>Tip:</strong> Click "Secured by Coinbase" 10x for mock mode when testing
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {lastResult && (
@@ -71,6 +102,7 @@ export default function TestPaymentsPage() {
               creatorId="creator-001"
               onSuccess={handleSuccess}
               onError={handleError}
+              testMode={fiatTestMode}
             />
             <Card>
               <CardHeader>
@@ -89,9 +121,11 @@ export default function TestPaymentsPage() {
                 <p className="text-sm text-muted-foreground">
                   <strong>Test Cases:</strong>
                   <br />• Try $0.001 ultra-test package (1 gem)
-                  <br />• Test different gem packages
-                  <br />• Verify USDC payment works
-                  <br />• Test onramp functionality
+                  <br />• Test different gem packages  
+                  <br />• Verify crypto payments (USDC on Base)
+                  <br />• <strong>Enable fiat test mode for credit card testing</strong>
+                  <br />• Test Coinbase onramp mock mode (click "Secured" 10x)
+                  <br />• Verify webhooks fire for fiat payments
                 </p>
               </CardContent>
             </Card>
