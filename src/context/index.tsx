@@ -9,8 +9,17 @@ import { wagmiAdapter, projectId, networks } from '@/config'
 // Set up queryClient
 const queryClient = new QueryClient()
 
+// Fallback project ID if environment variable is not set
+const FALLBACK_PROJECT_ID = 'b35fce82601fc7cd22b6eaa9dec2db69'
+
 if (!projectId) {
-  throw new Error('Project ID is not defined')
+  console.error('⚠️ Project ID not found in environment, using fallback')
+  console.log('Debug info:', {
+    env: process.env.NODE_ENV,
+    hasProjectId: !!process.env.NEXT_PUBLIC_PROJECT_ID,
+    projectIdValue: process.env.NEXT_PUBLIC_PROJECT_ID,
+    usingFallback: true
+  })
 }
 
 // Set up metadata - URL must match deployment domain
@@ -21,10 +30,20 @@ const metadata = {
   icons: ['https://ffdashboard-three.vercel.app/favicon.ico']
 }
 
+// Use fallback if project ID is not set
+const finalProjectId = projectId || FALLBACK_PROJECT_ID
+
+console.log('🔧 Creating AppKit with:', {
+  projectId: finalProjectId,
+  hasOriginalProjectId: !!projectId,
+  metadata: metadata.url,
+  networks: networks.map(n => n.name)
+})
+
 // Create the modal
 const modal = createAppKit({
   adapters: [wagmiAdapter],
-  projectId,
+  projectId: finalProjectId,
   networks,
   metadata,
   features: {
