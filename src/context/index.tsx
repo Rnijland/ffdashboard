@@ -13,11 +13,11 @@ if (!projectId) {
   throw new Error('Project ID is not defined')
 }
 
-// Set up metadata
+// Set up metadata - URL must match deployment domain
 const metadata = {
   name: 'FanFlow Payment Gateway',
-  description: 'Crypto payment gateway for OnlyFans-style platforms',
-  url: 'https://ffdashboard-three.vercel.app', // origin must match your domain & subdomain
+  description: 'Crypto payment gateway for creators and agencies',
+  url: typeof window !== 'undefined' ? window.location.origin : 'https://ffdashboard-three.vercel.app',
   icons: ['https://ffdashboard-three.vercel.app/favicon.ico']
 }
 

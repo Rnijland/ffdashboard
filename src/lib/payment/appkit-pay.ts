@@ -86,9 +86,23 @@ export async function processPayment(
 ) {
   try {
     // Dynamic import to avoid build errors if package isn't installed yet
-    const { pay } = await import('@reown/appkit-pay');
+    const { pay } = await import('@reown/appkit-pay').catch(() => {
+      console.error('AppKit Pay module not found. Please ensure @reown/appkit-pay is installed.');
+      throw new Error('Payment module not available. Please try again later.');
+    });
+    
+    if (!pay) {
+      throw new Error('Payment function not available');
+    }
     
     const paymentAsset = getActivePaymentAsset(preferUSDC);
+    
+    console.log('Initiating payment:', {
+      recipient: MERCHANT_WALLET,
+      amount,
+      asset: paymentAsset.metadata.symbol,
+      network: paymentAsset.network
+    });
     
     const result = await pay({
       recipient: MERCHANT_WALLET,
@@ -114,8 +128,18 @@ export async function processPayment(
     await updatePaymentDatabase(result, metadata);
     
     return result;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Payment failed:', error);
+    
+    // Provide user-friendly error messages
+    if (error.message?.includes('Origin')) {
+      throw new Error('Payment service configuration error. Please contact support.');
+    } else if (error.message?.includes('Unable to get exchanges')) {
+      throw new Error('Exchange services temporarily unavailable. Please try wallet payment instead.');
+    } else if (error.message?.includes('User rejected')) {
+      throw new Error('Payment cancelled by user.');
+    }
+    
     throw error;
   }
 }
