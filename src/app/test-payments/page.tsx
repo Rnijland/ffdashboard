@@ -12,7 +12,7 @@ import { Button } from "@/registry/new-york-v4/ui/button";
 import { Switch } from "@/registry/new-york-v4/ui/switch";
 import { Label } from "@/registry/new-york-v4/ui/label";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, CreditCard } from "lucide-react";
 
 export default function TestPaymentsPage() {
   const [lastResult, setLastResult] = useState<any>(null);
@@ -39,12 +39,18 @@ export default function TestPaymentsPage() {
           Test all payment widget types with proper validation and metadata
         </p>
         
-        {/* Reown Onramp Link */}
-        <div className="flex justify-center mb-4">
+        {/* Reown Links */}
+        <div className="flex justify-center gap-2 mb-4">
           <Button asChild variant="outline" className="gap-2">
             <Link href="/test-payments/reown-onramp">
               <ExternalLink className="h-4 w-4" />
-              Test Reown AppKit + Meld.io Onramp
+              Reown Onramp (Buy Crypto)
+            </Link>
+          </Button>
+          <Button asChild variant="default" className="gap-2">
+            <Link href="/test-payments/appkit-pay">
+              <CreditCard className="h-4 w-4" />
+              AppKit Pay (Merchant Payments)
             </Link>
           </Button>
         </div>
