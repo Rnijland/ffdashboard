@@ -77,6 +77,172 @@ const testAgencies = [
   },
 ];
 
+// Enhanced transaction creation with realistic patterns
+async function createRealisticTransactionHistory(agency: any, agencyData: any, createdTransactions: any[]) {
+  const now = new Date();
+  
+  // Define different agency payment patterns
+  const patterns = {
+    'stellar-models': { reliability: 0.95, preferredMethod: 'crypto', avgDays: 28 },
+    'elite-creators': { reliability: 0.98, preferredMethod: 'crypto', avgDays: 30 },
+    'diamond-content': { reliability: 0.92, preferredMethod: 'card', avgDays: 31 },
+    'premium-talent': { reliability: 0.70, preferredMethod: 'card', avgDays: 35 }, // Problematic
+    'nextgen-influencers': { reliability: 0.88, preferredMethod: 'crypto', avgDays: 29 },
+    'sunset-media': { reliability: 0.40, preferredMethod: 'card', avgDays: 45 }, // Very problematic
+    'rising-stars': { reliability: 0.85, preferredMethod: 'crypto', avgDays: 32 },
+    'platinum-creators': { reliability: 0.99, preferredMethod: 'crypto', avgDays: 28 }, // Excellent
+    'global-talent': { reliability: 0.75, preferredMethod: 'card', avgDays: 33 },
+    'luxe-content': { reliability: 0.90, preferredMethod: 'crypto', avgDays: 30 }
+  };
+
+  const pattern = patterns[agencyData.slug] || { reliability: 0.85, preferredMethod: 'crypto', avgDays: 30 };
+  
+  // Create 8-12 months of history
+  const monthsOfHistory = Math.floor(Math.random() * 5) + 8;
+  
+  for (let month = 0; month < monthsOfHistory; month++) {
+    const baseDate = new Date(now);
+    baseDate.setMonth(baseDate.getMonth() - month);
+    baseDate.setDate(Math.floor(Math.random() * 5) + pattern.avgDays - 30); // Vary payment dates
+    
+    const transactionAmount = agencyData.creators_count * 40;
+    const fee = transactionAmount * 0.025;
+    
+    // Determine if this payment should succeed based on agency pattern
+    const shouldSucceed = Math.random() < pattern.reliability;
+    
+    // Payment method preference with some variation
+    const paymentMethod = Math.random() < 0.8 ? pattern.preferredMethod : 
+                         (pattern.preferredMethod === 'crypto' ? 'card' : 'crypto');
+    
+    // Create the main subscription payment
+    const mainStatus = shouldSucceed ? 'completed' : 'failed';
+    const mainTransaction = await xanoClient.createTransaction({
+      type: 'subscription',
+      amount: transactionAmount,
+      fee: shouldSucceed ? fee : 0,
+      net_amount: shouldSucceed ? transactionAmount - fee : 0,
+      status: mainStatus,
+      payment_method: paymentMethod,
+      agency: agency.id,
+      wallet_address: agencyData.wallet_address,
+      metadata: {
+        billing_period: 'monthly',
+        creators_count: agencyData.creators_count,
+        month: month,
+        attempt: 1,
+        failure_reason: !shouldSucceed ? getRandomFailureReason(paymentMethod) : undefined
+      },
+      idempotency_key: `seed-subscription-${agencyData.slug}-${month}-${Date.now()}-${Math.random()}`,
+    });
+
+    if (mainTransaction.data) {
+      createdTransactions.push(mainTransaction.data);
+    }
+
+    // If payment failed, create retry attempts (some succeed, some don't)
+    if (!shouldSucceed && Math.random() < 0.7) {
+      const retryAttempts = Math.floor(Math.random() * 3) + 1;
+      
+      for (let retry = 1; retry <= retryAttempts; retry++) {
+        const retryDate = new Date(baseDate);
+        retryDate.setDate(retryDate.getDate() + retry * 2); // 2, 4, 6 days later
+        
+        // Later retries have better success chance
+        const retrySuccessChance = pattern.reliability + (retry * 0.1);
+        const retrySucceeds = Math.random() < retrySuccessChance;
+        
+        const retryTransaction = await xanoClient.createTransaction({
+          type: 'subscription',
+          amount: transactionAmount,
+          fee: retrySucceeds ? fee : 0,
+          net_amount: retrySucceeds ? transactionAmount - fee : 0,
+          status: retrySucceeds ? 'completed' : 'failed',
+          payment_method: paymentMethod,
+          agency: agency.id,
+          wallet_address: agencyData.wallet_address,
+          metadata: {
+            billing_period: 'monthly',
+            creators_count: agencyData.creators_count,
+            month: month,
+            attempt: retry + 1,
+            is_retry: true,
+            original_failure: true,
+            failure_reason: !retrySucceeds ? getRandomFailureReason(paymentMethod) : undefined
+          },
+          idempotency_key: `seed-retry-${agencyData.slug}-${month}-${retry}-${Date.now()}-${Math.random()}`,
+        });
+
+        if (retryTransaction.data) {
+          createdTransactions.push(retryTransaction.data);
+        }
+
+        // If retry succeeded, stop trying
+        if (retrySucceeds) break;
+      }
+    }
+
+    // Add some random extra transactions for active agencies (partial payments, adjustments, etc.)
+    if (agencyData.subscription_status === 'active' && Math.random() < 0.3) {
+      const extraTypes = ['partial_payment', 'adjustment', 'late_fee'];
+      const extraType = extraTypes[Math.floor(Math.random() * extraTypes.length)];
+      
+      let extraAmount = 0;
+      if (extraType === 'partial_payment') extraAmount = transactionAmount * 0.5;
+      else if (extraType === 'adjustment') extraAmount = Math.floor(Math.random() * 50) + 10;
+      else if (extraType === 'late_fee') extraAmount = 25;
+
+      const extraDate = new Date(baseDate);
+      extraDate.setDate(extraDate.getDate() + Math.floor(Math.random() * 10));
+
+      const extraTransaction = await xanoClient.createTransaction({
+        type: 'subscription',
+        amount: extraAmount,
+        fee: extraAmount * 0.025,
+        net_amount: extraAmount * 0.975,
+        status: 'completed',
+        payment_method: paymentMethod,
+        agency: agency.id,
+        wallet_address: agencyData.wallet_address,
+        metadata: {
+          transaction_type: extraType,
+          billing_period: 'monthly',
+          creators_count: agencyData.creators_count,
+          month: month,
+          is_extra: true
+        },
+        idempotency_key: `seed-extra-${agencyData.slug}-${month}-${extraType}-${Date.now()}-${Math.random()}`,
+      });
+
+      if (extraTransaction.data) {
+        createdTransactions.push(extraTransaction.data);
+      }
+    }
+  }
+}
+
+function getRandomFailureReason(paymentMethod: string) {
+  const cryptoReasons = [
+    'Insufficient wallet balance',
+    'Network congestion',
+    'Transaction timeout',
+    'Gas fee too low',
+    'Wallet connection failed'
+  ];
+  
+  const cardReasons = [
+    'Insufficient funds',
+    'Card expired',
+    'Card declined',
+    'Invalid CVV',
+    'Bank authorization failed',
+    'Fraud prevention triggered'
+  ];
+  
+  const reasons = paymentMethod === 'crypto' ? cryptoReasons : cardReasons;
+  return reasons[Math.floor(Math.random() * reasons.length)];
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Check if already seeded
@@ -134,72 +300,8 @@ export async function POST(request: NextRequest) {
       if (result.data) {
         createdAgencies.push(result.data);
 
-        // Create multiple transactions for history
-        if (agencyData.subscription_status === 'active') {
-          // Create 3-6 months of payment history
-          const monthsOfHistory = Math.floor(Math.random() * 4) + 3;
-          
-          for (let month = 0; month < monthsOfHistory; month++) {
-            const daysAgo = month * 30 + Math.floor(Math.random() * 5);
-            const paymentDate = new Date();
-            paymentDate.setDate(paymentDate.getDate() - daysAgo);
-
-            const transactionAmount = agencyData.creators_count * 40;
-            const fee = transactionAmount * 0.025; // 2.5% fee
-            
-            // Most payments succeed, but add some failures for realism
-            const status = Math.random() > 0.9 ? 'failed' : 'completed';
-            const paymentMethod = Math.random() > 0.5 ? 'crypto' : 'card';
-
-            const transactionResult = await xanoClient.createTransaction({
-              type: 'subscription',
-              amount: transactionAmount,
-              fee: fee,
-              status: status,
-              payment_method: paymentMethod,
-              agency: result.data.id,
-              wallet_address: agencyData.wallet_address,
-              metadata: {
-                billing_period: 'monthly',
-                creators_count: agencyData.creators_count,
-                month: month,
-              },
-              idempotency_key: `seed-subscription-${agencyData.slug}-${month}-${Date.now()}`,
-            });
-
-            if (transactionResult.data) {
-              createdTransactions.push(transactionResult.data);
-            }
-          }
-        } else if (agencyData.subscription_status === 'inactive') {
-          // Create an older payment (40-50 days ago) to simulate overdue
-          const daysAgo = Math.floor(Math.random() * 10) + 40; // 40-50 days ago
-          const paymentDate = new Date();
-          paymentDate.setDate(paymentDate.getDate() - daysAgo);
-
-          const transactionAmount = agencyData.creators_count * 40;
-          const fee = transactionAmount * 0.025;
-
-          const transactionResult = await xanoClient.createTransaction({
-            type: 'subscription',
-            amount: transactionAmount,
-            fee: fee,
-            status: 'completed',
-            payment_method: 'card',
-            agency: result.data.id,
-            wallet_address: agencyData.wallet_address,
-            metadata: {
-              billing_period: 'monthly',
-              creators_count: agencyData.creators_count,
-            },
-            idempotency_key: `seed-subscription-${agencyData.slug}-${Date.now()}`,
-          });
-
-          if (transactionResult.data) {
-            createdTransactions.push(transactionResult.data);
-          }
-        }
-        // For suspended agencies, we don't create any recent transactions
+        // Create comprehensive transaction history for ALL agencies
+        await createRealisticTransactionHistory(result.data, agencyData, createdTransactions);
       }
     }
 
