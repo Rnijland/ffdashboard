@@ -5,6 +5,8 @@ import localFont from 'next/font/local';
 
 import { Header } from '@/components/layout/header';
 import { Providers } from '@/components/providers';
+import ContextProvider from '@/context';
+import { headers } from 'next/headers';
 
 import '@/app/globals.css';
 import { Toaster } from '@/registry/new-york-v4/ui/sonner';
@@ -26,19 +28,23 @@ export const metadata: Metadata = {
 };
 
 const Layout = ({ children }: Readonly<{ children: ReactNode }>) => {
+    const cookies = headers().get('cookie')
+    
     return (
         // ? https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
         // ? https://react.dev/reference/react-dom/client/hydrateRoot#suppressing-unavoidable-hydration-mismatch-errors
         <html suppressHydrationWarning lang='en'>
             <body
                 className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground overscroll-none antialiased`}>
-                <Providers>
-                    <Header />
-                    <main className="container mx-auto py-6">
-                        {children}
-                    </main>
-                    <Toaster />
-                </Providers>
+                <ContextProvider cookies={cookies}>
+                    <Providers>
+                        <Header />
+                        <main className="container mx-auto py-6">
+                            {children}
+                        </main>
+                        <Toaster />
+                    </Providers>
+                </ContextProvider>
             </body>
         </html>
     );

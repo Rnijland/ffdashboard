@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/registry/new-york-v4
 import { Button } from "@/registry/new-york-v4/ui/button";
 import { Switch } from "@/registry/new-york-v4/ui/switch";
 import { Label } from "@/registry/new-york-v4/ui/label";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 
 export default function TestPaymentsPage() {
   const [lastResult, setLastResult] = useState<any>(null);
@@ -36,6 +38,16 @@ export default function TestPaymentsPage() {
         <p className="text-muted-foreground text-center mb-4">
           Test all payment widget types with proper validation and metadata
         </p>
+        
+        {/* Reown Onramp Link */}
+        <div className="flex justify-center mb-4">
+          <Button asChild variant="outline" className="gap-2">
+            <Link href="/test-payments/reown-onramp">
+              <ExternalLink className="h-4 w-4" />
+              Test Reown AppKit + Meld.io Onramp
+            </Link>
+          </Button>
+        </div>
         
         {/* Fiat Test Mode Toggle */}
         <Card className="mb-4 max-w-md mx-auto">
