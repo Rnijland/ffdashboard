@@ -32,9 +32,9 @@ export function SubscriptionPaymentWidgetAppKit({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // Calculate amount based on $40/creator (production) or $0.001/creator (test)
+  // Calculate amount based on $0.01/creator for testing
   const IS_TESTNET = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_USE_TESTNET === 'true';
-  const FEE_PER_CREATOR = IS_TESTNET ? 0.001 : 40;
+  const FEE_PER_CREATOR = 0.01; // Always $0.01 for testing
   
   useEffect(() => {
     setAmount(creators * FEE_PER_CREATOR);

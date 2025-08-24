@@ -151,7 +151,7 @@ async function updatePaymentDatabase(paymentResult: any, metadata: PaymentMetada
 export async function processSubscriptionPayment(
   agencyId: string,
   creatorsCount: number,
-  monthlyFeePerCreator: number = 40 // $40 per creator
+  monthlyFeePerCreator: number = 0.01 // $0.01 per creator for testing
 ) {
   const totalAmount = creatorsCount * monthlyFeePerCreator;
   
