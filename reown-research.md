@@ -1,10 +1,28 @@
-# Reown AppKit Pay - Payment Integration Guide
+# Reown AppKit - Complete Web3 Payment Solutions
 
 ## Overview
 
-Reown AppKit Pay is a comprehensive payment processing solution for Web3 applications. This document explains how it works, how to integrate it, and why it's the best choice for merchant payment processing.
+Reown offers two complementary solutions for Web3 applications: **AppKit Core** for user wallet management and **AppKit Pay** for merchant payment processing. This document explains both modules and their use cases.
 
-## AppKit Pay Features
+## AppKit Core vs AppKit Pay
+
+Reown provides two distinct but complementary modules:
+
+### AppKit Core 🔗
+- **Wallet connections** - Connect to 600+ wallets
+- **Onramp services** - Users buy crypto for themselves via Meld.io
+- **Swap functionality** - Token swapping within wallets
+- **User-focused features** - Account management, balance display
+- **Use case**: When users need to connect wallets or buy crypto
+
+### AppKit Pay 💳 (Our Primary Solution)
+- **Merchant payment processing** - Accept payments for products/services
+- **Direct to merchant wallet** - Funds go straight to your configured address
+- **Multiple payment methods** - Wallets, exchanges, credit cards
+- **Business-focused features** - Subscriptions, checkout flows
+- **Use case**: When you need to collect payments from customers
+
+## AppKit Pay Features (What We Implemented)
 
 AppKit Pay is designed specifically for merchants who need to accept payments for products and services. It provides a complete payment gateway that sends funds directly to your merchant wallet.
 
@@ -100,7 +118,19 @@ User clicks "Subscribe" → AppKit Pay modal opens → User selects payment meth
 - Update subscription status in database
 - Track transaction hashes for verification
 
-## File Structure (Already Implemented)
+## What We Have Implemented
+
+### AppKit Core Implementation
+- ✅ **Wallet connections** at `/test-payments/reown-onramp`
+- ✅ **Meld.io onramp** - Users can buy crypto for themselves
+- ✅ **600+ wallet support** via Reown providers
+
+### AppKit Pay Implementation  
+- ✅ **Merchant payment processing** for subscriptions
+- ✅ **Direct payments to merchant wallet**
+- ✅ **Multiple payment methods** (wallets, exchanges, cards)
+
+## File Structure
 
 ```
 src/
@@ -109,7 +139,8 @@ src/
 ├── components/payment/
 │   └── subscription-payment-widget-appkit.tsx
 ├── app/test-payments/
-│   └── appkit-pay/page.tsx    # Test all payment types
+│   ├── reown-onramp/page.tsx  # AppKit Core (wallet + onramp)
+│   └── appkit-pay/page.tsx    # AppKit Pay (merchant payments)
 └── .env.local                 # NEXT_PUBLIC_MERCHANT_WALLET
 ```
 
@@ -123,12 +154,18 @@ NEXT_PUBLIC_MERCHANT_WALLET=0xD27DDFA8a656432AE73695aF2c7306E22271bFA6
 NEXT_PUBLIC_USE_TESTNET=true  # Base Sepolia for testing
 ```
 
-## Testing
+## Testing Both Modules
 
-1. **Test Page**: `/test-payments/appkit-pay`
-2. **Payment Types**: Subscriptions, gems, pokes, media unlocks
-3. **Payment Methods**: Wallets, exchanges, credit cards
-4. **Networks**: Base Sepolia (test) / Base Mainnet (production)
+### AppKit Core Testing
+- **Test Page**: `/test-payments/reown-onramp`
+- **Features**: Wallet connections, Meld.io onramp
+- **Use Case**: Users buying crypto for themselves
+
+### AppKit Pay Testing  
+- **Test Page**: `/test-payments/appkit-pay`
+- **Payment Types**: Subscriptions, gems, pokes, media unlocks
+- **Payment Methods**: Wallets, exchanges, credit cards
+- **Networks**: Base Sepolia (test) / Base Mainnet (production)
 
 ## Team Integration Notes
 
