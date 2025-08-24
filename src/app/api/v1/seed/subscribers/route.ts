@@ -78,8 +78,9 @@ const testAgencies = [
 ];
 
 // Enhanced transaction creation with realistic patterns
-async function createRealisticTransactionHistory(agency: any, agencyData: any, createdTransactions: any[]) {
+async function createRealisticTransactionHistory(agency: any, agencyData: any) {
   const now = new Date();
+  const localTransactions = [];
   
   // Define different agency payment patterns
   const patterns = {
@@ -95,7 +96,7 @@ async function createRealisticTransactionHistory(agency: any, agencyData: any, c
     'luxe-content': { reliability: 0.90, preferredMethod: 'crypto', avgDays: 30 }
   };
 
-  const pattern = patterns[agencyData.slug] || { reliability: 0.85, preferredMethod: 'crypto', avgDays: 30 };
+  const pattern = patterns[agencyData.slug as keyof typeof patterns] || { reliability: 0.85, preferredMethod: 'crypto', avgDays: 30 };
   
   // Create 3-6 months of history (reduced for reliability)
   const monthsOfHistory = Math.floor(Math.random() * 4) + 3;
@@ -131,7 +132,6 @@ async function createRealisticTransactionHistory(agency: any, agencyData: any, c
         metadata: {
           billing_period: 'monthly',
           creators_count: agencyData.creators_count,
-          month: month,
           attempt: 1,
           failure_reason: !shouldSucceed ? getRandomFailureReason(paymentMethod) : undefined
         },
@@ -139,8 +139,8 @@ async function createRealisticTransactionHistory(agency: any, agencyData: any, c
       });
 
       if (mainTransaction.data) {
-        createdTransactions.push(mainTransaction.data);
-        console.log(`✓ Created transaction ${createdTransactions.length} for ${agencyData.name} (month ${month})`);
+        localTransactions.push(mainTransaction.data);
+        console.log(`✓ Created transaction ${localTransactions.length} for ${agencyData.name} (month ${month})`);
       } else {
         console.error(`Failed to create transaction for ${agencyData.name}:`, mainTransaction.error);
       }
@@ -166,7 +166,6 @@ async function createRealisticTransactionHistory(agency: any, agencyData: any, c
           metadata: {
             billing_period: 'monthly',
             creators_count: agencyData.creators_count,
-            month: month,
             attempt: 2,
             is_retry: true
           },
@@ -174,7 +173,7 @@ async function createRealisticTransactionHistory(agency: any, agencyData: any, c
         });
 
         if (retryTransaction.data) {
-          createdTransactions.push(retryTransaction.data);
+          localTransactions.push(retryTransaction.data);
           console.log(`✓ Created retry transaction for ${agencyData.name}`);
         }
       } catch (error) {
@@ -182,6 +181,8 @@ async function createRealisticTransactionHistory(agency: any, agencyData: any, c
       }
     }
   }
+  
+  return localTransactions;
 }
 
 function getRandomFailureReason(paymentMethod: string) {
@@ -251,13 +252,14 @@ export async function POST(request: NextRequest) {
       
       const result = await xanoClient.createAgency({
         ...agencyData,
-        monthly_revenue: monthlyRevenue,
-        lifetime_value: lifetimeValue,
-        health_score: healthScore,
-        onboarding_status: onboardingStatus,
-        referral_code: `REF-${agencyData.slug.toUpperCase()}`,
-        referral_commission_rate: 10,
-        settings: {},
+        // These fields might not exist in database yet, commenting for now
+        // monthly_revenue: monthlyRevenue,
+        // lifetime_value: lifetimeValue,
+        // health_score: healthScore,
+        // onboarding_status: onboardingStatus,
+        // referral_code: `REF-${agencyData.slug.toUpperCase()}`,
+        // referral_commission_rate: 10,
+        // settings: {},
       });
 
       if (result.data) {
@@ -265,8 +267,9 @@ export async function POST(request: NextRequest) {
 
         // Create comprehensive transaction history for ALL agencies
         console.log(`Creating transaction history for ${agencyData.name}...`);
-        await createRealisticTransactionHistory(result.data, agencyData, createdTransactions);
-        console.log(`Created transactions for ${agencyData.name}, total now: ${createdTransactions.length}`);
+        const transactions = await createRealisticTransactionHistory(result.data, agencyData);
+        createdTransactions.push(...transactions);
+        console.log(`Created ${transactions.length} transactions for ${agencyData.name}, total now: ${createdTransactions.length}`);
       }
     }
 

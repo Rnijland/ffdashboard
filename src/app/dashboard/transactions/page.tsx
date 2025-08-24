@@ -76,7 +76,7 @@ export default function TransactionsPage() {
   ).map(([method, count]) => ({ name: method, value: count }));
 
   const exportTransactions = () => {
-    if (!data) return;
+    if (!data?.transactions) return;
     
     const csv = [
       ['ID', 'Date', 'Agency', 'Amount', 'Fee', 'Net', 'Status', 'Type', 'Method'].join(','),
@@ -328,7 +328,7 @@ export default function TransactionsPage() {
               <CardDescription>Identify and resolve payment failures</CardDescription>
             </CardHeader>
             <CardContent>
-              {data && data.transactions.filter(t => t.status === 'failed').length > 0 ? (
+              {data?.transactions && data.transactions.filter(t => t.status === 'failed').length > 0 ? (
                 <div className="space-y-4">
                   {data.transactions
                     .filter(t => t.status === 'failed')

@@ -123,9 +123,9 @@ export default function SubscribersPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalCount}</div>
+            <div className="text-2xl font-bold">{totalSubscribers}</div>
             <p className="text-xs text-muted-foreground">
-              {activeCount} active, {totalCount - activeCount} inactive
+              {activeCount} active, {totalSubscribers - activeCount} inactive
             </p>
           </CardContent>
         </Card>
