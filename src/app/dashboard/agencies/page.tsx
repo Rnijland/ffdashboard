@@ -44,9 +44,7 @@ export default function AgenciesPage() {
   const totalMRR = agencies
     .filter((a: any) => a.payment_status === 'active')
     .reduce((sum: number, a: any) => sum + (a.monthly_fee || 0), 0);
-  const avgHealthScore = agencies.length > 0
-    ? agencies.reduce((sum: number, a: any) => sum + (a.health_score || 0), 0) / agencies.length
-    : 0;
+  const ETH_PRICE_USD = 3500;
 
   return (
     <div className="space-y-6 p-6">
@@ -82,22 +80,24 @@ export default function AgenciesPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalMRR)}</div>
+            <div className="text-2xl font-bold">{totalMRR.toFixed(4)} ETH</div>
             <p className="text-xs text-muted-foreground">
-              From active agencies
+              ${(totalMRR * ETH_PRICE_USD).toFixed(2)} USD
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Health Score</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Avg Revenue/Agency</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{avgHealthScore.toFixed(0)}</div>
+            <div className="text-2xl font-bold">
+              {activeAgencies > 0 ? (totalMRR / activeAgencies).toFixed(4) : '0'} ETH
+            </div>
             <p className="text-xs text-muted-foreground">
-              Overall health
+              ${activeAgencies > 0 ? ((totalMRR / activeAgencies) * ETH_PRICE_USD).toFixed(2) : '0.00'} USD
             </p>
           </CardContent>
         </Card>
@@ -171,7 +171,7 @@ export default function AgenciesPage() {
                     <div>
                       <div className="font-medium">{agency.name}</div>
                       <div className="text-sm text-muted-foreground">
-                        {agency.creators_count} creators • {formatCurrency(agency.monthly_fee)}/month
+                        {agency.creators_count} creators • {(agency.monthly_fee || 0).toFixed(4)} ETH/month
                       </div>
                     </div>
                   </div>
@@ -185,9 +185,6 @@ export default function AgenciesPage() {
                       >
                         {agency.payment_status}
                       </Badge>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        Health: {agency.health_score || 0}%
-                      </div>
                     </div>
                   </div>
                 </div>

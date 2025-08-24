@@ -39,7 +39,23 @@ export function useTransactions(filters: TransactionFilters = {}) {
       if (!response.ok) {
         throw new Error('Failed to fetch transactions');
       }
-      return response.json();
+      const data = await response.json();
+      
+      // If the API returns an array directly, wrap it in the expected format
+      if (Array.isArray(data)) {
+        const transactions = data;
+        const totalVolume = transactions.reduce((sum, t) => sum + (t.status === 'completed' ? t.amount : 0), 0);
+        const totalFees = transactions.reduce((sum, t) => sum + (t.fee || 0), 0);
+        
+        return {
+          transactions,
+          total: transactions.length,
+          totalVolume,
+          totalFees
+        };
+      }
+      
+      return data;
     },
     refetchInterval: 30000, // Refresh every 30 seconds
     staleTime: 10000

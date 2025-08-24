@@ -98,9 +98,10 @@ export async function GET(request: NextRequest) {
         subscription_status: agency.subscription_status || 'inactive',
         created_at: String(agency.created_at),
         updated_at: agency.updated_at,
+        // Calculate monthly fee in ETH (0.004 per creator based on real data)
+        monthly_fee: (agency.creators_count || 0) * 0.004,
         // Enhanced fields from database
-        health_score: agency.health_score || null,
-        onboarding_status: agency.onboarding_status || 'pending',
+        onboarding_status: agency.onboarding_status || '',
         monthly_revenue: agency.monthly_revenue || monthlyFee,
         lifetime_value: agency.lifetime_value || 0,
         referral_code: agency.referral_code || null,

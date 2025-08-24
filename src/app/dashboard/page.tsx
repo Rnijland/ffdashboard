@@ -99,8 +99,8 @@ function TransactionRow({ transaction }: { transaction: Transaction }) {
           {transaction.type}
         </Badge>
       </TableCell>
-      <TableCell>{formatCurrency(transaction.amount)}</TableCell>
-      <TableCell>{formatCurrency(transaction.fee)}</TableCell>
+      <TableCell>{transaction.amount.toFixed(4)} ETH</TableCell>
+      <TableCell>{(transaction.fee || 0).toFixed(6)} ETH</TableCell>
       <TableCell>
         <Badge variant={getStatusBadgeVariant(transaction.status)}>
           {transaction.status}
@@ -208,6 +208,7 @@ export default function DashboardPage() {
   const totalRevenue = data?.totalRevenue || 0;
   const totalTransactions = data?.totalTransactions || 0;
   const mrr = data?.monthlyRecurringRevenue || 0;
+  const ETH_PRICE_USD = 3500; // You can fetch this from an API
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -225,8 +226,8 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           title="Total Revenue"
-          value={formatCurrency(totalRevenue)}
-          description="All-time revenue"
+          value={`${totalRevenue.toFixed(4)} ETH`}
+          description={`$${(totalRevenue * ETH_PRICE_USD).toFixed(2)} USD`}
           icon={DollarSign}
         />
         <MetricCard
@@ -243,8 +244,8 @@ export default function DashboardPage() {
         />
         <MetricCard
           title="Monthly Recurring"
-          value={formatCurrency(mrr)}
-          description="MRR from subscriptions"
+          value={`${mrr.toFixed(4)} ETH`}
+          description={`$${(mrr * ETH_PRICE_USD).toFixed(2)} USD/mo`}
           icon={Users}
         />
       </div>

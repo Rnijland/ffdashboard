@@ -47,10 +47,13 @@ export default function SubscribersPage() {
     return null;
   }
 
-  // Calculate total MRR from active agencies
+  // Calculate total MRR from active agencies (in ETH)
   const totalMRR = data?.subscribers
     ?.filter(s => s.payment_status === 'active')
-    .reduce((sum, s) => sum + s.monthly_fee, 0) || 0;
+    .reduce((sum, s) => sum + (s.monthly_fee || 0), 0) || 0;
+  
+  const ETH_PRICE_USD = 3500; // You can fetch this from an API
+  const totalMRRUSD = totalMRR * ETH_PRICE_USD;
 
   const activeCount = data?.subscribers?.filter(s => s.payment_status === 'active').length || 0;
   const totalSubscribers = data?.subscribers?.length || 0;
@@ -59,13 +62,12 @@ export default function SubscribersPage() {
     if (!subscribers) return;
     
     const csv = [
-      ['Agency Name', 'Creators', 'Monthly Fee', 'Status', 'Health Score', 'Last Payment', 'Created'],
+      ['Agency Name', 'Creators', 'Monthly Fee (ETH)', 'Status', 'Last Payment', 'Created'],
       ...subscribers.map(s => [
         s.name,
         s.creators_count,
-        s.monthly_fee,
+        s.monthly_fee || 0,
         s.payment_status,
-        s.health_score || 0,
         s.last_payment_date || 'Never',
         s.created_at
       ])
@@ -87,13 +89,6 @@ export default function SubscribersPage() {
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <Filter className="mr-2 h-4 w-4" />
-            Filters
-          </Button>
-          <Button
-            variant="outline"
             onClick={() => exportSubscribers(data?.subscribers || [])}
           >
             <Download className="mr-2 h-4 w-4" />
@@ -110,9 +105,9 @@ export default function SubscribersPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalMRR)}</div>
+            <div className="text-2xl font-bold">{totalMRR.toFixed(4)} ETH</div>
             <p className="text-xs text-muted-foreground">
-              From {activeCount} active {activeCount === 1 ? 'agency' : 'agencies'}
+              ${totalMRRUSD.toFixed(2)} USD • {activeCount} active
             </p>
           </CardContent>
         </Card>
@@ -137,10 +132,10 @@ export default function SubscribersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {activeCount > 0 ? formatCurrency(totalMRR / activeCount) : '$0.00'}
+              {activeCount > 0 ? (totalMRR / activeCount).toFixed(4) : '0'} ETH
             </div>
             <p className="text-xs text-muted-foreground">
-              Based on active agencies
+              ${activeCount > 0 ? ((totalMRR / activeCount) * ETH_PRICE_USD).toFixed(2) : '0.00'} USD
             </p>
           </CardContent>
         </Card>
@@ -162,14 +157,6 @@ export default function SubscribersPage() {
       </div>
 
 
-      {/* Advanced Filters */}
-      {showFilters && (
-        <AdvancedFilterPanel 
-          filters={filters} 
-          onFiltersChange={setFilters}
-          onClose={() => setShowFilters(false)}
-        />
-      )}
 
       {/* Enhanced Search and Table */}
       <Card>
