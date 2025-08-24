@@ -40,7 +40,7 @@ export default function TestPaymentsPage() {
         </p>
         
         {/* Reown Links */}
-        <div className="flex justify-center gap-2 mb-4">
+        <div className="flex justify-center gap-2 mb-4 flex-wrap">
           <Button asChild variant="outline" className="gap-2">
             <Link href="/test-payments/reown-onramp">
               <ExternalLink className="h-4 w-4" />
@@ -50,7 +50,13 @@ export default function TestPaymentsPage() {
           <Button asChild variant="default" className="gap-2">
             <Link href="/test-payments/appkit-pay">
               <CreditCard className="h-4 w-4" />
-              AppKit Pay (Merchant Payments)
+              AppKit Pay (Merchant)
+            </Link>
+          </Button>
+          <Button asChild variant="default" className="gap-2 bg-green-600 hover:bg-green-700">
+            <Link href="/test-payments/fiat-flow">
+              <CreditCard className="h-4 w-4" />
+              ✅ Fiat Payment (Working!)
             </Link>
           </Button>
         </div>
