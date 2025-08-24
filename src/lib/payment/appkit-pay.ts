@@ -86,12 +86,12 @@ export async function processPayment(
 ) {
   try {
     // Dynamic import to avoid build errors if package isn't installed yet
-    const { pay } = await import('@reown/appkit-pay').catch(() => {
+    const appKitPay = await import('@reown/appkit-pay').catch(() => {
       console.error('AppKit Pay module not found. Please ensure @reown/appkit-pay is installed.');
       throw new Error('Payment module not available. Please try again later.');
     });
     
-    if (!pay) {
+    if (!appKitPay?.pay) {
       throw new Error('Payment function not available');
     }
     
@@ -104,17 +104,42 @@ export async function processPayment(
       network: paymentAsset.network
     });
     
-    const result = await pay({
-      recipient: MERCHANT_WALLET,
-      amount,
-      paymentAsset,
-      // Additional metadata can be passed for tracking
-      metadata: {
-        ...metadata,
-        timestamp: Date.now(),
-        environment: IS_TESTNET ? 'testnet' : 'mainnet'
+    // Try to initialize payment with reduced features if exchanges fail
+    let result;
+    try {
+      result = await appKitPay.pay({
+        recipient: MERCHANT_WALLET,
+        amount,
+        paymentAsset,
+        // Additional metadata can be passed for tracking
+        metadata: {
+          ...metadata,
+          timestamp: Date.now(),
+          environment: IS_TESTNET ? 'testnet' : 'mainnet'
+        }
+      });
+    } catch (payError: any) {
+      // If exchanges fail, try without exchange features
+      if (payError.message?.includes('Unable to get exchanges')) {
+        console.warn('Exchange services unavailable, falling back to wallet-only payment');
+        
+        // Use simplified payment flow
+        result = await appKitPay.pay({
+          recipient: MERCHANT_WALLET,
+          amount,
+          paymentAsset,
+          disableExchanges: true, // Try to disable exchange features
+          metadata: {
+            ...metadata,
+            timestamp: Date.now(),
+            environment: IS_TESTNET ? 'testnet' : 'mainnet',
+            fallbackMode: true
+          }
+        });
+      } else {
+        throw payError;
       }
-    });
+    }
     
     // Log successful payment
     console.log('Payment successful:', {
@@ -135,7 +160,7 @@ export async function processPayment(
     if (error.message?.includes('Origin')) {
       throw new Error('Payment service configuration error. Please contact support.');
     } else if (error.message?.includes('Unable to get exchanges')) {
-      throw new Error('Exchange services temporarily unavailable. Please try wallet payment instead.');
+      throw new Error('Exchange services temporarily unavailable. Please connect your wallet directly to proceed with payment.');
     } else if (error.message?.includes('User rejected')) {
       throw new Error('Payment cancelled by user.');
     }
@@ -249,11 +274,17 @@ export async function processMediaPayment(
 // Check payment status
 export async function checkPaymentStatus() {
   try {
-    const { getIsPaymentInProgress, getPayResult, getPayError } = await import('@reown/appkit-pay');
+    const appKitPay = await import('@reown/appkit-pay');
     
-    const isInProgress = await getIsPaymentInProgress();
-    const result = await getPayResult();
-    const error = await getPayError();
+    // Check if functions exist before calling
+    if (!appKitPay.getIsPaymentInProgress || !appKitPay.getPayResult || !appKitPay.getPayError) {
+      console.warn('Payment status functions not available');
+      return null;
+    }
+    
+    const isInProgress = await appKitPay.getIsPaymentInProgress();
+    const result = await appKitPay.getPayResult();
+    const error = await appKitPay.getPayError();
     
     return {
       isInProgress,
@@ -269,10 +300,18 @@ export async function checkPaymentStatus() {
 // Get available exchanges for payment
 export async function getAvailableExchanges() {
   try {
-    const { getExchanges } = await import('@reown/appkit-pay');
-    return await getExchanges();
+    const appKitPay = await import('@reown/appkit-pay');
+    
+    // Check if function exists
+    if (!appKitPay.getExchanges) {
+      console.warn('Exchange function not available in AppKit Pay');
+      return [];
+    }
+    
+    return await appKitPay.getExchanges();
   } catch (error) {
     console.error('Failed to get exchanges:', error);
+    // Return empty array instead of throwing
     return [];
   }
 }

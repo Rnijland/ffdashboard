@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { processSubscriptionPayment, MERCHANT_WALLET } from "@/lib/payment/appkit-pay";
+import { processFallbackPayment } from "@/lib/payment/fallback-payment";
+import { useAccount, useConnect } from "wagmi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/registry/new-york-v4/ui/card";
 import { Button } from "@/registry/new-york-v4/ui/button";
 import { Alert, AlertDescription } from "@/registry/new-york-v4/ui/alert";
@@ -31,6 +33,10 @@ export function SubscriptionPaymentWidgetAppKit({
   const [amount, setAmount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [useFallback, setUseFallback] = useState(false);
+  
+  const { address, isConnected } = useAccount();
+  const { connect, connectors } = useConnect();
   
   // Calculate amount based on $0.01/creator for testing
   const IS_TESTNET = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_USE_TESTNET === 'true';
@@ -54,11 +60,40 @@ export function SubscriptionPaymentWidgetAppKit({
     setIsLoading(true);
 
     try {
-      const result = await processSubscriptionPayment(
-        agencyId,
-        creators,
-        FEE_PER_CREATOR
-      );
+      let result;
+      
+      if (useFallback && isConnected) {
+        // Use fallback direct wallet payment
+        console.log('Using fallback payment method...');
+        result = await processFallbackPayment(amount, {
+          agencyId,
+          transactionType: 'subscription',
+          metadata: {
+            billing_period: 'monthly',
+            creators_count: creators,
+            fee_per_creator: FEE_PER_CREATOR
+          }
+        });
+      } else {
+        // Try AppKit Pay first
+        try {
+          result = await processSubscriptionPayment(
+            agencyId,
+            creators,
+            FEE_PER_CREATOR
+          );
+        } catch (appKitError: any) {
+          // If AppKit Pay fails due to exchanges, offer fallback
+          if (appKitError.message?.includes('Exchange services')) {
+            console.warn('AppKit Pay failed, switching to fallback mode');
+            setUseFallback(true);
+            setError("Exchange services unavailable. Please connect your wallet to continue.");
+            setIsLoading(false);
+            return;
+          }
+          throw appKitError;
+        }
+      }
 
       console.log('👑 Subscription payment SUCCESS:', result);
       setIsLoading(false);
@@ -154,30 +189,45 @@ export function SubscriptionPaymentWidgetAppKit({
         </div>
 
         {error && (
-          <Alert variant="destructive">
+          <Alert variant={useFallback ? "default" : "destructive"}>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
+        {/* Wallet Connection for Fallback */}
+        {useFallback && !isConnected && (
+          <Button 
+            onClick={() => connect({ connector: connectors[0] })}
+            className="w-full"
+            size="lg"
+            variant="outline"
+          >
+            <Wallet className="mr-2 h-4 w-4" />
+            Connect Wallet to Continue
+          </Button>
+        )}
+
         {/* Payment Button */}
-        <Button 
-          onClick={handlePayment}
-          disabled={disabled || isLoading || !isValidCreators || !isValidAmount}
-          className="w-full"
-          size="lg"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing Payment...
-            </>
-          ) : (
-            <>
-              <CreditCard className="mr-2 h-4 w-4" />
-              Subscribe - ${amount.toFixed(2)}/month
-            </>
-          )}
-        </Button>
+        {(!useFallback || isConnected) && (
+          <Button 
+            onClick={handlePayment}
+            disabled={disabled || isLoading || !isValidCreators || !isValidAmount}
+            className="w-full"
+            size="lg"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing Payment...
+              </>
+            ) : (
+              <>
+                <CreditCard className="mr-2 h-4 w-4" />
+                Subscribe - ${amount.toFixed(2)}/month
+              </>
+            )}
+          </Button>
+        )}
 
         <p className="text-xs text-center text-muted-foreground">
           Powered by Reown AppKit Pay • Supports 600+ wallets & exchanges
