@@ -2,24 +2,11 @@
 
 ## Overview
 
-Reown AppKit Pay is a comprehensive payment processing solution for Web3 applications. This document explains how it works, how to integrate it, and why it's superior to ThirdWeb for our use case.
-
-## AppKit vs AppKit Pay
-
-**Important Distinction**: There are two different modules:
-
-### AppKit Core
-- Basic wallet connections
-- Onramp (users buy crypto for themselves)
-- User-focused features
-
-### AppKit Pay ⭐ (What We Use)
-- **Merchant payment processing** for products/services
-- Payments go directly to **YOUR wallet**
-- Handles subscriptions, one-time payments, recurring billing
-- Supports 600+ wallets + exchanges + credit cards
+Reown AppKit Pay is a comprehensive payment processing solution for Web3 applications. This document explains how it works, how to integrate it, and why it's the best choice for merchant payment processing.
 
 ## AppKit Pay Features
+
+AppKit Pay is designed specifically for merchants who need to accept payments for products and services. It provides a complete payment gateway that sends funds directly to your merchant wallet.
 
 ### Payment Methods
 1. **Pay with Self-Custodial Wallet** - MetaMask, Trust, Ledger, etc.
@@ -27,10 +14,10 @@ Reown AppKit Pay is a comprehensive payment processing solution for Web3 applica
 3. **One-Click Checkout** - Fast, mobile-optimized flows (coming soon)
 4. **Subscriptions & Recurring Payments** - For memberships, SaaS (coming soon)
 
-### Why AppKit Pay is Perfect for FanFlow
-- **600+ wallet support** - Reach maximum users
+### Why AppKit Pay is Ideal for Our Use Case
+- **600+ wallet support** - Maximum user reach
 - **Exchange payments** - Users pay directly from Binance/Coinbase (no withdrawals!)
-- **Low KYC options** - Major advantage over ThirdWeb
+- **Low KYC options** - Better conversion rates
 - **Multi-chain** - EVM, Solana, Bitcoin support
 - **No smart contract deployment** - AppKit handles infrastructure
 - **Apple Pay / Google Pay** - Available through onramp providers
