@@ -14,10 +14,8 @@ import { Separator } from '@/registry/new-york-v4/ui/separator'
 import { 
   CreditCard, 
   Wallet, 
-  Building2, 
   CheckCircle, 
   XCircle,
-  ArrowRight,
   DollarSign,
   Sparkles,
   Heart,
@@ -159,59 +157,6 @@ export default function AppKitPayTestPage() {
         </Card>
       )}
 
-      {/* Payment Options */}
-      <div className="grid gap-6 md:grid-cols-3 mb-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Wallet className="h-5 w-5" />
-              Self-Custody Wallets
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="text-sm space-y-1 text-muted-foreground">
-              <li>• MetaMask</li>
-              <li>• Trust Wallet</li>
-              <li>• Ledger</li>
-              <li>• 600+ more wallets</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Building2 className="h-5 w-5" />
-              Exchange Payments
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="text-sm space-y-1 text-muted-foreground">
-              <li>• Binance (Direct)</li>
-              <li>• Coinbase (Direct)</li>
-              <li>• No withdrawals needed</li>
-              <li>• One-click payment</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <CreditCard className="h-5 w-5" />
-              Fiat Onramp
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="text-sm space-y-1 text-muted-foreground">
-              <li>• Credit/Debit Cards</li>
-              <li>• Bank Transfers</li>
-              <li>• Apple Pay / Google Pay*</li>
-              <li>• Via Meld.io providers</li>
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Test Payment Widgets */}
       <Tabs defaultValue="subscription" className="space-y-4">
