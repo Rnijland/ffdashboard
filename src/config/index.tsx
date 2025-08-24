@@ -6,7 +6,12 @@ import { mainnet, base, baseSepolia } from 'viem/chains'
 export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID
 
 if (!projectId) {
-  throw new Error('NEXT_PUBLIC_PROJECT_ID is not set')
+  console.error('❌ NEXT_PUBLIC_PROJECT_ID is not configured!')
+  console.error('📋 Please add your Reown project ID to environment variables:')
+  console.error('   - For local development: add to .env.local')
+  console.error('   - For Vercel deployment: add to Vercel dashboard Environment Variables')
+  console.error('🔗 Get your project ID from: https://dashboard.reown.com')
+  throw new Error('NEXT_PUBLIC_PROJECT_ID is not set. Please configure your Reown project ID.')
 }
 
 // Define networks - using Base for production and Base Sepolia for testing
