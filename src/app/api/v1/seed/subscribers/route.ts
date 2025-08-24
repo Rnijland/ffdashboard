@@ -77,111 +77,134 @@ const testAgencies = [
   },
 ];
 
-// Enhanced transaction creation with realistic patterns
-async function createRealisticTransactionHistory(agency: any, agencyData: any) {
-  const now = new Date();
+// Enhanced transaction creation with realistic patterns matching real data structure
+async function createRealisticTransactionHistory(agency: any, agencyData: any, creatorIds: number[]) {
+  const now = Date.now();
   const localTransactions = [];
   
-  // Define different agency payment patterns
-  const patterns = {
-    'stellar-models': { reliability: 0.95, preferredMethod: 'crypto', avgDays: 28 },
-    'elite-creators': { reliability: 0.98, preferredMethod: 'crypto', avgDays: 30 },
-    'diamond-content': { reliability: 0.92, preferredMethod: 'card', avgDays: 31 },
-    'premium-talent': { reliability: 0.70, preferredMethod: 'card', avgDays: 35 }, // Problematic
-    'nextgen-influencers': { reliability: 0.88, preferredMethod: 'crypto', avgDays: 29 },
-    'sunset-media': { reliability: 0.40, preferredMethod: 'card', avgDays: 45 }, // Very problematic
-    'rising-stars': { reliability: 0.85, preferredMethod: 'crypto', avgDays: 32 },
-    'platinum-creators': { reliability: 0.99, preferredMethod: 'crypto', avgDays: 28 }, // Excellent
-    'global-talent': { reliability: 0.75, preferredMethod: 'card', avgDays: 33 },
-    'luxe-content': { reliability: 0.90, preferredMethod: 'crypto', avgDays: 30 }
-  };
-
-  const pattern = patterns[agencyData.slug as keyof typeof patterns] || { reliability: 0.85, preferredMethod: 'crypto', avgDays: 30 };
+  // Transaction types based on real examples
+  const transactionTypes = ['subscription', 'chat', 'media', 'poke', 'gems'] as const;
   
-  // Create 3-6 months of history (reduced for reliability)
+  // Create 3-6 months of varied transaction history
   const monthsOfHistory = Math.floor(Math.random() * 4) + 3;
   console.log(`Creating ${monthsOfHistory} months of history for ${agencyData.name}`);
   
   for (let month = 0; month < monthsOfHistory; month++) {
-    const baseDate = new Date(now);
-    baseDate.setMonth(baseDate.getMonth() - month);
-    baseDate.setDate(Math.floor(Math.random() * 5) + pattern.avgDays - 30); // Vary payment dates
+    const monthTimestamp = now - (month * 30 * 24 * 60 * 60 * 1000); // Go back in time
     
-    const transactionAmount = agencyData.creators_count * 40;
-    const fee = transactionAmount * 0.025;
+    // Create subscription payment for this month
+    const subscriptionAmount = agencyData.creators_count * 0.004; // 0.004 per creator like in example
+    const subscriptionFee = subscriptionAmount * 0.025;
     
-    // Determine if this payment should succeed based on agency pattern
-    const shouldSucceed = Math.random() < pattern.reliability;
-    
-    // Payment method preference with some variation
-    const paymentMethod = Math.random() < 0.8 ? pattern.preferredMethod : 
-                         (pattern.preferredMethod === 'crypto' ? 'card' : 'crypto');
-    
-    // Create the main subscription payment
-    const mainStatus = shouldSucceed ? 'completed' : 'failed';
     try {
-      const mainTransaction = await xanoClient.createTransaction({
+      // Generate manual transaction ID like in the examples
+      const txId = `manual_${monthTimestamp}_${Math.random().toString(36).substring(2, 8)}`;
+      
+      const subscriptionTx = await xanoClient.createTransaction({
+        thirdweb_transaction_id: txId,
         type: 'subscription',
-        amount: transactionAmount,
-        fee: shouldSucceed ? fee : 0,
-        net_amount: shouldSucceed ? transactionAmount - fee : 0,
-        status: mainStatus,
-        payment_method: paymentMethod,
+        amount: subscriptionAmount,
+        fee: subscriptionFee,
+        net_amount: subscriptionAmount - subscriptionFee,
+        status: 'completed',
+        payment_method: 'crypto',
         agency: agency.id,
+        creator: undefined, // Subscription has no specific creator - use undefined not 0
         wallet_address: agencyData.wallet_address,
         metadata: {
-          billing_period: 'monthly',
-          creators_count: agencyData.creators_count,
-          attempt: 1,
-          failure_reason: !shouldSucceed ? getRandomFailureReason(paymentMethod) : undefined
+          type: 'subscription'
         },
-        idempotency_key: `seed-subscription-${agencyData.slug}-${month}-${Date.now()}-${Math.random()}`,
+        idempotency_key: `payment_subscription_${agencyData.wallet_address}_${subscriptionAmount}_${monthTimestamp}`,
       });
 
-      if (mainTransaction.data) {
-        localTransactions.push(mainTransaction.data);
-        console.log(`✓ Created transaction ${localTransactions.length} for ${agencyData.name} (month ${month})`);
+      if (subscriptionTx.data) {
+        localTransactions.push(subscriptionTx.data);
+        console.log(`✓ Created subscription transaction for ${agencyData.name} (month ${month + 1}, ID: ${subscriptionTx.data.id}, TX: ${txId})`);
       } else {
-        console.error(`Failed to create transaction for ${agencyData.name}:`, mainTransaction.error);
+        console.error(`✗ Failed to create subscription for ${agencyData.name}:`, subscriptionTx.error);
       }
     } catch (error) {
-      console.error(`Error creating transaction for ${agencyData.name}:`, error);
+      console.error(`Error creating subscription for ${agencyData.name}:`, error);
     }
-
-    // Add a simple retry if failed (only one retry to keep it simple)
-    if (!shouldSucceed && Math.random() < 0.5) {
+    
+    // Create various creator transactions for this month
+    const numCreatorTransactions = Math.floor(Math.random() * 15) + 5; // 5-20 transactions per month
+    
+    for (let i = 0; i < numCreatorTransactions; i++) {
+      const dayOffset = Math.floor(Math.random() * 30);
+      const txTimestamp = monthTimestamp + (dayOffset * 24 * 60 * 60 * 1000);
+      const txId = `manual_${txTimestamp}_${Math.random().toString(36).substring(2, 8)}`;
+      
+      // Pick a random creator (or use 1 if no creators)
+      const creatorId = creatorIds.length > 0 ? 
+        creatorIds[Math.floor(Math.random() * creatorIds.length)] : 1;
+      
+      // Pick a random transaction type (excluding subscription)
+      const txType = ['chat', 'media', 'poke'][Math.floor(Math.random() * 3)];
+      
+      // Amount is always 0.001 for creator transactions in the examples
+      const amount = 0.001;
+      const fee = 0.000025;
+      
+      let metadata: any = {};
+      let idempotencyPrefix = 'payment_';
+      
+      // Set metadata based on type
+      switch (txType) {
+        case 'chat':
+          metadata = { message_count: 1 };
+          idempotencyPrefix = 'payment_gems_';
+          break;
+        case 'media':
+          metadata = { type: 'media' };
+          idempotencyPrefix = 'payment_media_';
+          break;
+        case 'poke':
+          const pokeMessages = [
+            "Poke you in your brown eye <3",
+            "Hey there cutie!",
+            "Thinking of you",
+            "*poke poke*",
+            "Miss you!"
+          ];
+          metadata = { 
+            type: 'poke',
+            message: pokeMessages[Math.floor(Math.random() * pokeMessages.length)],
+            message_count: 1
+          };
+          idempotencyPrefix = 'payment_poke_';
+          break;
+      }
+      
       try {
-        const retryDate = new Date(baseDate);
-        retryDate.setDate(retryDate.getDate() + 3); // 3 days later
-        
-        const retryTransaction = await xanoClient.createTransaction({
-          type: 'subscription',
-          amount: transactionAmount,
+        const creatorTx = await xanoClient.createTransaction({
+          thirdweb_transaction_id: txId,
+          type: txType as any, // Cast to any since our types might not include all
+          amount: amount,
           fee: fee,
-          net_amount: transactionAmount - fee,
-          status: 'completed', // Retry usually succeeds
-          payment_method: paymentMethod,
+          net_amount: amount - fee,
+          status: 'completed',
+          payment_method: 'crypto',
           agency: agency.id,
+          creator: creatorId,
           wallet_address: agencyData.wallet_address,
-          metadata: {
-            billing_period: 'monthly',
-            creators_count: agencyData.creators_count,
-            attempt: 2,
-            is_retry: true
-          },
-          idempotency_key: `seed-retry-${agencyData.slug}-${month}-${Date.now()}-${Math.random()}`,
+          metadata: metadata,
+          idempotency_key: `${idempotencyPrefix}${agencyData.wallet_address}_${amount}_${txTimestamp}`,
         });
 
-        if (retryTransaction.data) {
-          localTransactions.push(retryTransaction.data);
-          console.log(`✓ Created retry transaction for ${agencyData.name}`);
+        if (creatorTx.data) {
+          localTransactions.push(creatorTx.data);
+          console.log(`  ✓ ${txType} transaction (creator ${creatorId}, TX: ${txId})`);
+        } else {
+          console.error(`  ✗ Failed ${txType} transaction:`, creatorTx.error);
         }
       } catch (error) {
-        console.error(`Error creating retry for ${agencyData.name}:`, error);
+        console.error(`Error creating ${txType} transaction:`, error);
       }
     }
   }
   
+  console.log(`✅ Created ${localTransactions.length} total transactions for ${agencyData.name}`);
   return localTransactions;
 }
 
@@ -209,8 +232,11 @@ function getRandomFailureReason(paymentMethod: string) {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('=== Starting seed process ===');
+    
     // Check if already seeded
     if (hasSeeded) {
+      console.log('Seed flag is set, aborting');
       return NextResponse.json(
         { message: 'Database has already been seeded. Reset the server to seed again.' },
         { status: 400 }
@@ -218,8 +244,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if agencies already exist
+    console.log('Checking for existing agencies...');
     const existingAgencies = await xanoClient.getAgencies();
     if (existingAgencies.data && existingAgencies.data.length > 0) {
+      console.log(`Found ${existingAgencies.data.length} existing agencies, aborting seed`);
       hasSeeded = true;
       return NextResponse.json(
         { message: 'Agencies already exist in database. Skipping seed.' },
@@ -228,64 +256,85 @@ export async function POST(request: NextRequest) {
     }
 
     const createdAgencies = [];
+    const createdCreators = [];
     const createdTransactions = [];
 
-    // Create agencies with enhanced data
+    console.log(`Will create ${testAgencies.length} agencies`);
+
+    // Create agencies and creators
     for (const agencyData of testAgencies) {
-      // Calculate realistic metrics
-      const monthsActive = Math.floor(Math.random() * 24) + 1;
-      const monthlyRevenue = agencyData.creators_count * 40;
-      const lifetimeValue = monthlyRevenue * monthsActive;
-      
-      // Calculate health score based on status
-      let healthScore = 85 + Math.floor(Math.random() * 15); // 85-100 for active
-      if (agencyData.subscription_status === 'inactive') {
-        healthScore = 40 + Math.floor(Math.random() * 20); // 40-60 for inactive
-      } else if (agencyData.subscription_status === 'suspended') {
-        healthScore = 10 + Math.floor(Math.random() * 20); // 10-30 for suspended
-      }
-      
-      // Determine onboarding status
-      const onboardingStatus = 
-        agencyData.subscription_status === 'active' ? 'completed' :
-        agencyData.subscription_status === 'inactive' ? 'in_progress' : 'pending';
+      console.log(`\n--- Creating agency: ${agencyData.name} ---`);
       
       const result = await xanoClient.createAgency({
         ...agencyData,
-        // These fields might not exist in database yet, commenting for now
-        // monthly_revenue: monthlyRevenue,
-        // lifetime_value: lifetimeValue,
-        // health_score: healthScore,
-        // onboarding_status: onboardingStatus,
-        // referral_code: `REF-${agencyData.slug.toUpperCase()}`,
-        // referral_commission_rate: 10,
-        // settings: {},
       });
 
       if (result.data) {
+        console.log(`✓ Created agency: ${agencyData.name} (ID: ${result.data.id})`);
         createdAgencies.push(result.data);
 
+        // Create some creators for this agency (1-3 per agency)
+        const numCreators = Math.min(agencyData.creators_count, 3);
+        const agencyCreatorIds = [];
+        
+        for (let i = 0; i < numCreators; i++) {
+          const creatorName = `Creator ${i + 1}`;
+          const creatorResult = await xanoClient.createCreator({
+            agency: result.data.id,
+            name: `${agencyData.name} - ${creatorName}`,
+            username: `${agencyData.slug}_creator_${i + 1}`,
+            status: 'active',
+            commission_rate: 20,
+          });
+          
+          if (creatorResult.data) {
+            console.log(`  ✓ Created creator: ${creatorName} (ID: ${creatorResult.data.id})`);
+            createdCreators.push(creatorResult.data);
+            agencyCreatorIds.push(creatorResult.data.id);
+          } else {
+            console.log(`  ✗ Failed to create creator: ${creatorName}`, creatorResult.error);
+          }
+        }
+
         // Create comprehensive transaction history for ALL agencies
-        console.log(`Creating transaction history for ${agencyData.name}...`);
-        const transactions = await createRealisticTransactionHistory(result.data, agencyData);
+        console.log(`\nCreating transaction history for ${agencyData.name}...`);
+        const transactions = await createRealisticTransactionHistory(result.data, agencyData, agencyCreatorIds);
         createdTransactions.push(...transactions);
-        console.log(`Created ${transactions.length} transactions for ${agencyData.name}, total now: ${createdTransactions.length}`);
+        console.log(`Summary: Created ${transactions.length} transactions for ${agencyData.name}, total now: ${createdTransactions.length}`);
+      } else {
+        console.log(`✗ Failed to create agency: ${agencyData.name}`, result.error);
       }
     }
 
     // Mark as seeded
     hasSeeded = true;
 
+    console.log('\n=== Seed Summary ===');
+    console.log(`Agencies created: ${createdAgencies.length}`);
+    console.log(`Creators created: ${createdCreators.length}`);
+    console.log(`Transactions created: ${createdTransactions.length}`);
+    console.log('===================\n');
+
     return NextResponse.json({
       message: 'Seed data created successfully',
       stats: {
         agencies_created: createdAgencies.length,
+        creators_created: createdCreators.length,
         transactions_created: createdTransactions.length,
       },
       agencies: createdAgencies.map(a => ({
+        id: a.id,
         name: a.name,
         creators_count: a.creators_count,
         subscription_status: a.subscription_status,
+      })),
+      sample_transactions: createdTransactions.slice(0, 5).map(t => ({
+        id: t.id,
+        thirdweb_transaction_id: t.thirdweb_transaction_id,
+        type: t.type,
+        amount: t.amount,
+        agency: t.agency,
+        creator: t.creator,
       })),
     });
   } catch (error) {
