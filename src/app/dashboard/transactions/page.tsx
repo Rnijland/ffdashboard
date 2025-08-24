@@ -43,36 +43,37 @@ export default function TransactionsPage() {
     sortOrder
   });
 
-  // Calculate summary metrics
-  const summaryMetrics = data ? {
-    totalTransactions: data.transactions.length,
-    totalVolume: data.transactions.reduce((sum, t) => sum + (t.status === 'completed' ? t.amount : 0), 0),
-    successRate: data.transactions.length > 0 
-      ? (data.transactions.filter(t => t.status === 'completed').length / data.transactions.length * 100)
+  // Calculate summary metrics with null safety
+  const transactions = data?.transactions || [];
+  const summaryMetrics = {
+    totalTransactions: transactions.length,
+    totalVolume: transactions.reduce((sum, t) => sum + (t.status === 'completed' ? t.amount : 0), 0),
+    successRate: transactions.length > 0 
+      ? (transactions.filter(t => t.status === 'completed').length / transactions.length * 100)
       : 0,
-    avgTransactionSize: data.transactions.filter(t => t.status === 'completed').length > 0
-      ? data.transactions.filter(t => t.status === 'completed').reduce((sum, t) => sum + t.amount, 0) / 
-        data.transactions.filter(t => t.status === 'completed').length
+    avgTransactionSize: transactions.filter(t => t.status === 'completed').length > 0
+      ? transactions.filter(t => t.status === 'completed').reduce((sum, t) => sum + t.amount, 0) / 
+        transactions.filter(t => t.status === 'completed').length
       : 0,
-    failedCount: data.transactions.filter(t => t.status === 'failed').length,
-    pendingCount: data.transactions.filter(t => t.status === 'pending').length,
-    totalFees: data.transactions.reduce((sum, t) => sum + (t.fee || 0), 0),
-    netRevenue: data.transactions.reduce((sum, t) => sum + ((t.net_amount || 0)), 0)
-  } : null;
+    failedCount: transactions.filter(t => t.status === 'failed').length,
+    pendingCount: transactions.filter(t => t.status === 'pending').length,
+    totalFees: transactions.reduce((sum, t) => sum + (t.fee || 0), 0),
+    netRevenue: transactions.reduce((sum, t) => sum + ((t.net_amount || 0)), 0)
+  };
 
-  // Prepare data for charts
-  const statusDistribution = data ? [
-    { name: 'Completed', value: data.transactions.filter(t => t.status === 'completed').length },
-    { name: 'Failed', value: data.transactions.filter(t => t.status === 'failed').length },
-    { name: 'Pending', value: data.transactions.filter(t => t.status === 'pending').length }
-  ] : [];
+  // Prepare data for charts with null safety
+  const statusDistribution = [
+    { name: 'Completed', value: transactions.filter(t => t.status === 'completed').length },
+    { name: 'Failed', value: transactions.filter(t => t.status === 'failed').length },
+    { name: 'Pending', value: transactions.filter(t => t.status === 'pending').length }
+  ];
 
-  const paymentMethodDistribution = data ? Object.entries(
-    data.transactions.reduce((acc, t) => {
+  const paymentMethodDistribution = Object.entries(
+    transactions.reduce((acc, t) => {
       acc[t.payment_method || 'unknown'] = (acc[t.payment_method || 'unknown'] || 0) + 1;
       return acc;
     }, {} as Record<string, number>)
-  ).map(([method, count]) => ({ name: method, value: count })) : [];
+  ).map(([method, count]) => ({ name: method, value: count }));
 
   const exportTransactions = () => {
     if (!data) return;
@@ -247,9 +248,9 @@ export default function TransactionsPage() {
                 <div className="text-center py-8">Loading transactions...</div>
               ) : error ? (
                 <div className="text-center py-8 text-red-600">Failed to load transactions</div>
-              ) : data && data.transactions.length > 0 ? (
+              ) : transactions.length > 0 ? (
                 <TransactionTable 
-                  transactions={data.transactions}
+                  transactions={transactions}
                   onSort={(column) => {
                     if (column === sortBy) {
                       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -261,7 +262,7 @@ export default function TransactionsPage() {
                 />
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  No transactions found
+                  No transactions found. <a href="/dashboard/settings" className="text-primary hover:underline">Seed test data</a> to get started.
                 </div>
               )}
             </CardContent>

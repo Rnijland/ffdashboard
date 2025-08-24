@@ -53,7 +53,7 @@ export default function SubscribersPage() {
     .reduce((sum, s) => sum + s.monthly_fee, 0) || 0;
 
   const activeCount = data?.subscribers?.filter(s => s.payment_status === 'active').length || 0;
-  const totalCount = data?.subscribers?.length || 0;
+  const totalSubscribers = data?.subscribers?.length || 0;
 
   const exportSubscribers = (subscribers: any[]) => {
     if (!subscribers) return;
@@ -213,7 +213,7 @@ export default function SubscribersPage() {
           )}
 
           {/* Enhanced Subscriber Table with Real Data */}
-          {!isLoading && !isError && data && (
+          {!isLoading && !isError && data && data.subscribers && data.subscribers.length > 0 ? (
             <EnhancedRealSubscriberTable 
               subscribers={data.subscribers}
               selectedSubscribers={selectedSubscribers}
@@ -222,6 +222,10 @@ export default function SubscribersPage() {
               sortColumn={filters.sortBy}
               sortDirection={filters.sortOrder}
             />
+          ) : !isLoading && !isError && (
+            <div className="text-center py-8 text-muted-foreground">
+              No subscribers found. <a href="/dashboard/settings" className="text-primary hover:underline">Seed test data</a> to get started.
+            </div>
           )}
         </CardContent>
       </Card>
