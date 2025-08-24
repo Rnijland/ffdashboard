@@ -255,7 +255,7 @@ export function ChatPaymentWidget({
               paymentMethods={["crypto", "card"]}
               currency="USD"
               theme="light"
-              testMode={testMode} // Enable fiat onramp testing
+              // testMode={testMode} // Enable fiat onramp testing - removed due to type error
             />
           </div>
         )}
