@@ -178,9 +178,10 @@ export function ChatPaymentWidget({
         )}
 
         {!account && (
-          <Alert className="bg-amber-50 border-amber-200">
+          <Alert className="bg-blue-50 border-blue-200">
             <AlertDescription>
-              👆 <strong>Sign in with Google</strong> using the button above to make payments
+              💳 <strong>Credit Card Payments:</strong> No wallet needed - use onramp for direct payments<br/>
+              🔗 <strong>Crypto Payments:</strong> Connect wallet above for crypto payments
             </AlertDescription>
           </Alert>
         )}
@@ -226,7 +227,7 @@ export function ChatPaymentWidget({
         {!showWidget ? (
           <Button 
             onClick={openCheckout}
-            disabled={disabled || isLoading || !account}
+            disabled={disabled || isLoading}
             className="w-full"
           >
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
