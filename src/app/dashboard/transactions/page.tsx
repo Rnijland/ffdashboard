@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import { useTransactions } from "@/hooks/use-transactions";
 import { TransactionTable } from "@/components/dashboard/transaction-table";
-import { TransactionAnalytics } from "@/components/dashboard/transaction-analytics";
 import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell } from "recharts";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -318,7 +317,9 @@ export default function TransactionsPage() {
             </Card>
           </div>
 
-          <TransactionAnalytics transactions={data?.transactions || []} />
+          <div className="text-center py-8 text-muted-foreground">
+            Transaction analytics coming soon...
+          </div>
         </TabsContent>
 
         <TabsContent value="failures" className="space-y-4">

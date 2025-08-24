@@ -12,7 +12,6 @@ import { useSubscribers } from "@/hooks/use-subscribers";
 import { Search, DollarSign, Users, AlertCircle, Filter, Download, Shield, TrendingUp } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { EnhancedRealSubscriberTable } from "@/components/dashboard/enhanced-real-subscriber-table";
-import { AdvancedFilterPanel } from "@/components/dashboard/advanced-filter-panel";
 
 export default function SubscribersPage() {
   const [search, setSearch] = useState("");
