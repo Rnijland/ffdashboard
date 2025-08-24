@@ -95,11 +95,26 @@ export async function GET(request: NextRequest) {
         slug: agency.slug,
         wallet_address: agency.wallet_address || '',
         creators_count: agency.creators_count || 0,
-        monthly_fee: monthlyFee,
-        payment_status: paymentStatus,
-        last_payment_date: lastPaymentDate,
         subscription_status: agency.subscription_status || 'inactive',
         created_at: String(agency.created_at),
+        updated_at: agency.updated_at,
+        // Enhanced fields from database
+        health_score: agency.health_score || null,
+        onboarding_status: agency.onboarding_status || 'pending',
+        monthly_revenue: agency.monthly_revenue || monthlyFee,
+        lifetime_value: agency.lifetime_value || 0,
+        referral_code: agency.referral_code || null,
+        // Calculated fields
+        payment_status: paymentStatus,
+        last_payment_date: lastPaymentDate,
+        failed_payments_count: transactions.filter((t: any) => 
+          t.agency === agency.id && t.status === 'failed'
+        ).length,
+        success_rate: transactions.filter((t: any) => t.agency === agency.id).length > 0
+          ? (transactions.filter((t: any) => 
+              t.agency === agency.id && t.status === 'completed'
+            ).length / transactions.filter((t: any) => t.agency === agency.id).length) * 100
+          : 100
       };
     });
 

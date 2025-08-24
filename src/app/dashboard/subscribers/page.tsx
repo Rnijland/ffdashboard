@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useSubscribers } from "@/hooks/use-subscribers";
 import { Search, DollarSign, Users, AlertCircle, Filter, Download, Shield, TrendingUp } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-import { CleanSubscriberTable } from "@/components/dashboard/clean-subscriber-table";
+import { EnhancedRealSubscriberTable } from "@/components/dashboard/enhanced-real-subscriber-table";
 import { AdvancedFilterPanel } from "@/components/dashboard/advanced-filter-panel";
 
 export default function SubscribersPage() {
@@ -212,9 +212,9 @@ export default function SubscribersPage() {
             </Alert>
           )}
 
-          {/* Enhanced Subscriber Table */}
+          {/* Enhanced Subscriber Table with Real Data */}
           {!isLoading && !isError && data && (
-            <CleanSubscriberTable 
+            <EnhancedRealSubscriberTable 
               subscribers={data.subscribers}
               selectedSubscribers={selectedSubscribers}
               onSelectionChange={setSelectedSubscribers}

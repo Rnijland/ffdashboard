@@ -100,12 +100,32 @@ export async function POST(request: NextRequest) {
     const createdAgencies = [];
     const createdTransactions = [];
 
-    // Create agencies
+    // Create agencies with enhanced data
     for (const agencyData of testAgencies) {
+      // Calculate realistic metrics
+      const monthsActive = Math.floor(Math.random() * 24) + 1;
+      const monthlyRevenue = agencyData.creators_count * 40;
+      const lifetimeValue = monthlyRevenue * monthsActive;
+      
+      // Calculate health score based on status
+      let healthScore = 85 + Math.floor(Math.random() * 15); // 85-100 for active
+      if (agencyData.subscription_status === 'inactive') {
+        healthScore = 40 + Math.floor(Math.random() * 20); // 40-60 for inactive
+      } else if (agencyData.subscription_status === 'suspended') {
+        healthScore = 10 + Math.floor(Math.random() * 20); // 10-30 for suspended
+      }
+      
+      // Determine onboarding status
+      const onboardingStatus = 
+        agencyData.subscription_status === 'active' ? 'completed' :
+        agencyData.subscription_status === 'inactive' ? 'in_progress' : 'pending';
+      
       const result = await xanoClient.createAgency({
         ...agencyData,
-        monthly_revenue: 0,
-        lifetime_value: 0,
+        monthly_revenue: monthlyRevenue,
+        lifetime_value: lifetimeValue,
+        health_score: healthScore,
+        onboarding_status: onboardingStatus,
         referral_code: `REF-${agencyData.slug.toUpperCase()}`,
         referral_commission_rate: 10,
         settings: {},
@@ -114,33 +134,42 @@ export async function POST(request: NextRequest) {
       if (result.data) {
         createdAgencies.push(result.data);
 
-        // Create subscription transactions for active agencies
+        // Create multiple transactions for history
         if (agencyData.subscription_status === 'active') {
-          // Create a recent successful payment (within last 30 days)
-          const daysAgo = Math.floor(Math.random() * 25) + 5; // 5-30 days ago
-          const paymentDate = new Date();
-          paymentDate.setDate(paymentDate.getDate() - daysAgo);
+          // Create 3-6 months of payment history
+          const monthsOfHistory = Math.floor(Math.random() * 4) + 3;
+          
+          for (let month = 0; month < monthsOfHistory; month++) {
+            const daysAgo = month * 30 + Math.floor(Math.random() * 5);
+            const paymentDate = new Date();
+            paymentDate.setDate(paymentDate.getDate() - daysAgo);
 
-          const transactionAmount = agencyData.creators_count * 40;
-          const fee = transactionAmount * 0.025; // 2.5% fee
+            const transactionAmount = agencyData.creators_count * 40;
+            const fee = transactionAmount * 0.025; // 2.5% fee
+            
+            // Most payments succeed, but add some failures for realism
+            const status = Math.random() > 0.9 ? 'failed' : 'completed';
+            const paymentMethod = Math.random() > 0.5 ? 'crypto' : 'card';
 
-          const transactionResult = await xanoClient.createTransaction({
-            type: 'subscription',
-            amount: transactionAmount,
-            fee: fee,
-            status: 'completed',
-            payment_method: 'crypto',
-            agency: result.data.id,
-            wallet_address: agencyData.wallet_address,
-            metadata: {
-              billing_period: 'monthly',
-              creators_count: agencyData.creators_count,
-            },
-            idempotency_key: `seed-subscription-${agencyData.slug}-${Date.now()}`,
-          });
+            const transactionResult = await xanoClient.createTransaction({
+              type: 'subscription',
+              amount: transactionAmount,
+              fee: fee,
+              status: status,
+              payment_method: paymentMethod,
+              agency: result.data.id,
+              wallet_address: agencyData.wallet_address,
+              metadata: {
+                billing_period: 'monthly',
+                creators_count: agencyData.creators_count,
+                month: month,
+              },
+              idempotency_key: `seed-subscription-${agencyData.slug}-${month}-${Date.now()}`,
+            });
 
-          if (transactionResult.data) {
-            createdTransactions.push(transactionResult.data);
+            if (transactionResult.data) {
+              createdTransactions.push(transactionResult.data);
+            }
           }
         } else if (agencyData.subscription_status === 'inactive') {
           // Create an older payment (40-50 days ago) to simulate overdue
