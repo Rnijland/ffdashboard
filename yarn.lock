@@ -1127,10 +1127,10 @@
   resolved "https://registry.yarnpkg.com/@next/env/-/env-15.5.0.tgz#5d66f1bf61a7e041ed0cb870923dc041a9be507f"
   integrity sha512-sDaprBAfzCQiOgo2pO+LhnV0Wt2wBgartjrr+dpcTORYVnnXD0gwhHhiiyIih9hQbq+JnbqH4odgcFWhqCGidw==
 
-"@next/eslint-plugin-next@15.5.0", "@next/eslint-plugin-next@^15.4.6":
-  version "15.5.0"
-  resolved "https://registry.yarnpkg.com/@next/eslint-plugin-next/-/eslint-plugin-next-15.5.0.tgz#bee716b8d435e3c8496391770c6eff5dcf848e51"
-  integrity sha512-+k83U/fST66eQBjTltX2T9qUYd43ntAe+NZ5qeZVTQyTiFiHvTLtkpLKug4AnZAtuI/lwz5tl/4QDJymjVkybg==
+"@next/eslint-plugin-next@15.5.2", "@next/eslint-plugin-next@^15.4.6":
+  version "15.5.2"
+  resolved "https://registry.yarnpkg.com/@next/eslint-plugin-next/-/eslint-plugin-next-15.5.2.tgz#6fa6b78687dbbb6f5726acd81bcdfd87dc26b6f3"
+  integrity sha512-lkLrRVxcftuOsJNhWatf1P2hNVfh98k/omQHrCEPPriUypR6RcS13IvLdIrEvkm9AH2Nu2YpR5vLqBuy6twH3Q==
   dependencies:
     fast-glob "3.3.1"
 
@@ -1318,6 +1318,13 @@
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/@paulmillr/qr/-/qr-0.2.1.tgz#76ade7080be4ac4824f638146fd8b6db1805eeca"
   integrity sha512-IHnV6A+zxU7XwmKFinmYjUcwlyK9+xkG3/s9KcQhI9BjQKycrJ1JRO+FbNYPwZiPKW3je/DR0k7w8/gLa5eaxQ==
+
+"@phosphor-icons/webcomponents@2.1.5":
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/@phosphor-icons/webcomponents/-/webcomponents-2.1.5.tgz#79dcdcc49ae17ea309080eebc463710221ced890"
+  integrity sha512-JcvQkZxvcX2jK+QCclm8+e8HXqtdFW9xV4/kk2aL9Y3dJA2oQVt+pzbv1orkumz3rfx4K9mn9fDoMr1He1yr7Q==
+  dependencies:
+    lit "^3"
 
 "@polka/url@^1.0.0-next.24":
   version "1.0.0-next.29"
@@ -2067,6 +2074,15 @@
     dayjs "1.11.13"
     viem ">=2.29.0"
 
+"@reown/appkit-common@1.8.1":
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-common/-/appkit-common-1.8.1.tgz#6d8b5fdccf3054f77ec125bf8dfb295e5262c5a5"
+  integrity sha512-VhhMnmD7aUAHGgCLbkrlM3Ek99aIMZiduPqExNe/6L/sORrPPoChnBqjVEBP2g4bErVU2BFIFhxo5oIVuP0fTg==
+  dependencies:
+    big.js "6.2.2"
+    dayjs "1.11.13"
+    viem ">=2.33.3"
+
 "@reown/appkit-controllers@1.7.20":
   version "1.7.20"
   resolved "https://registry.yarnpkg.com/@reown/appkit-controllers/-/appkit-controllers-1.7.20.tgz#ad59d8eb03bfa00a51157663fa93663c1f8995e8"
@@ -2088,6 +2104,17 @@
     "@walletconnect/universal-provider" "2.21.0"
     valtio "1.13.2"
     viem ">=2.29.0"
+
+"@reown/appkit-controllers@1.8.1":
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-controllers/-/appkit-controllers-1.8.1.tgz#917e76fd31398a7073ad81e711a4c495df57feb6"
+  integrity sha512-k720RMJbXhTFrSsAZrvgu+WAF3Sk8d5iHXo1wKmfNXxzpXeF7f5DlWijye/r7nMVXQGbtZFkjTm54ti7+5UfjQ==
+  dependencies:
+    "@reown/appkit-common" "1.8.1"
+    "@reown/appkit-wallet" "1.8.1"
+    "@walletconnect/universal-provider" "2.21.7"
+    valtio "2.1.5"
+    viem ">=2.33.3"
 
 "@reown/appkit-pay@1.7.20":
   version "1.7.20"
@@ -2113,6 +2140,18 @@
     lit "3.3.0"
     valtio "1.13.2"
 
+"@reown/appkit-pay@^1.7.20":
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-pay/-/appkit-pay-1.8.1.tgz#733e595a4df0b87f5c335893a4da46e480059402"
+  integrity sha512-5NM01g0ygtiGsPUR9N/GaBwyAtZir1Bg+iHZLUNrWOOS36dycEv2bOY1YvrCNgC9sWkQIMr4wiyukiybk3BANQ==
+  dependencies:
+    "@reown/appkit-common" "1.8.1"
+    "@reown/appkit-controllers" "1.8.1"
+    "@reown/appkit-ui" "1.8.1"
+    "@reown/appkit-utils" "1.8.1"
+    lit "3.3.0"
+    valtio "2.1.5"
+
 "@reown/appkit-polyfills@1.7.20":
   version "1.7.20"
   resolved "https://registry.yarnpkg.com/@reown/appkit-polyfills/-/appkit-polyfills-1.7.20.tgz#67abc8dcc78693b8871241cfc1272e0b622a4293"
@@ -2124,6 +2163,13 @@
   version "1.7.8"
   resolved "https://registry.yarnpkg.com/@reown/appkit-polyfills/-/appkit-polyfills-1.7.8.tgz#a0d362df8479cc66b7c6aa89e696f30783a3d21b"
   integrity sha512-W/kq786dcHHAuJ3IV2prRLEgD/2iOey4ueMHf1sIFjhhCGMynMkhsOhQMUH0tzodPqUgAC494z4bpIDYjwWXaA==
+  dependencies:
+    buffer "6.0.3"
+
+"@reown/appkit-polyfills@1.8.1":
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-polyfills/-/appkit-polyfills-1.8.1.tgz#712370205010897ed7d335bf805e0926948fac81"
+  integrity sha512-jr3m9x1yFyU2W7re551p6mxd5YpxCwfil/bG2ZrFADFwwDXLEYyz1MvXnP2ZJ57WNyFelm9kwB8xFQLqoZwZ8A==
   dependencies:
     buffer "6.0.3"
 
@@ -2173,6 +2219,18 @@
     lit "3.3.0"
     qrcode "1.5.3"
 
+"@reown/appkit-ui@1.8.1":
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-ui/-/appkit-ui-1.8.1.tgz#9b92a445d4bf40586f29e8ea54dda0d36dbdf2cf"
+  integrity sha512-iWY1zufKj+gDjQ7zxgnFBj+qJ+9gvN0mJWt5r0P1HYemiIV3VP7HUTxgOqTqTW3ggs4RzQy2sVY0Pli7V6m+1Q==
+  dependencies:
+    "@phosphor-icons/webcomponents" "2.1.5"
+    "@reown/appkit-common" "1.8.1"
+    "@reown/appkit-controllers" "1.8.1"
+    "@reown/appkit-wallet" "1.8.1"
+    lit "3.3.0"
+    qrcode "1.5.3"
+
 "@reown/appkit-utils@1.7.20":
   version "1.7.20"
   resolved "https://registry.yarnpkg.com/@reown/appkit-utils/-/appkit-utils-1.7.20.tgz#65276a14f385a2bd086cc94e7fcc9b8631aca349"
@@ -2202,6 +2260,21 @@
     valtio "1.13.2"
     viem ">=2.29.0"
 
+"@reown/appkit-utils@1.8.1":
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-utils/-/appkit-utils-1.8.1.tgz#ac2479ff1a47db471d127aef93719aad0358276d"
+  integrity sha512-WK+Fy17Qv4Vdx/L9gvCoBd3oikONIcrfkGmstk83+lQcM0krNHLPEA2gWytBOtetW+1bt+IwTaF2m4PKCrgIDw==
+  dependencies:
+    "@reown/appkit-common" "1.8.1"
+    "@reown/appkit-controllers" "1.8.1"
+    "@reown/appkit-polyfills" "1.8.1"
+    "@reown/appkit-wallet" "1.8.1"
+    "@wallet-standard/wallet" "1.1.0"
+    "@walletconnect/logger" "2.1.2"
+    "@walletconnect/universal-provider" "2.21.7"
+    valtio "2.1.5"
+    viem ">=2.33.3"
+
 "@reown/appkit-wallet@1.7.20":
   version "1.7.20"
   resolved "https://registry.yarnpkg.com/@reown/appkit-wallet/-/appkit-wallet-1.7.20.tgz#aa3992abb2ce2a7fc0fa31f22c0b8c94dd662aa2"
@@ -2219,6 +2292,16 @@
   dependencies:
     "@reown/appkit-common" "1.7.8"
     "@reown/appkit-polyfills" "1.7.8"
+    "@walletconnect/logger" "2.1.2"
+    zod "3.22.4"
+
+"@reown/appkit-wallet@1.8.1":
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-wallet/-/appkit-wallet-1.8.1.tgz#31b3a8dc4ecdf2515bdcfa8fc9f9e278b13230e6"
+  integrity sha512-luqzVqQdY+WlxFTQsH0RK53dAYhNfIyyimSkkIcNCnMIWYfq2xseeaKeSwViF+af1ae7tYEqZdq/6ohbMizPaw==
+  dependencies:
+    "@reown/appkit-common" "1.8.1"
+    "@reown/appkit-polyfills" "1.8.1"
     "@walletconnect/logger" "2.1.2"
     zod "3.22.4"
 
@@ -4813,12 +4896,12 @@ escape-string-regexp@^4.0.0:
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-4.0.0.tgz#14ba83a5d373e3d311e5afca29cf5bfad965bf34"
   integrity sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==
 
-eslint-config-next@^15.4.6:
-  version "15.5.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-next/-/eslint-config-next-15.5.0.tgz#3b9ec8ceb175986a7781b4106646da6a8d09c08f"
-  integrity sha512-Yl4hlOdBqstAuHnlBfx2RimBzWQwysM2SJNu5EzYVa2qS2ItPs7lgxL0sJJDudEx5ZZHfWPZ/6U8+FtDFWs7/w==
+eslint-config-next@^15.5.2:
+  version "15.5.2"
+  resolved "https://registry.yarnpkg.com/eslint-config-next/-/eslint-config-next-15.5.2.tgz#9629ed1deaa131e8e80cbae20acf631c8595ca3e"
+  integrity sha512-3hPZghsLupMxxZ2ggjIIrat/bPniM2yRpsVPVM40rp8ZMzKWOJp2CGWn7+EzoV2ddkUr5fxNfHpF+wU1hGt/3g==
   dependencies:
-    "@next/eslint-plugin-next" "15.5.0"
+    "@next/eslint-plugin-next" "15.5.2"
     "@rushstack/eslint-patch" "^1.10.3"
     "@typescript-eslint/eslint-plugin" "^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0"
     "@typescript-eslint/parser" "^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0"
@@ -6276,6 +6359,15 @@ lit@3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/lit/-/lit-3.3.0.tgz#b3037ea94676fb89c3dde9951914efefd0441f17"
   integrity sha512-DGVsqsOIHBww2DqnuZzW7QsuCdahp50ojuDaBPC7jUDRpYoH0z7kHBBYZewRzer75FwtrkmkKk7iOAwSaWdBmw==
+  dependencies:
+    "@lit/reactive-element" "^2.1.0"
+    lit-element "^4.2.0"
+    lit-html "^3.3.0"
+
+lit@^3:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/lit/-/lit-3.3.1.tgz#9dc79be626bc9a3b824de98b107dd662cabdeda6"
+  integrity sha512-Ksr/8L3PTapbdXJCk+EJVB78jDodUMaP54gD24W186zGRARvwrsPfS60wae/SSCTCNZVPd1chXqio1qHQmu4NA==
   dependencies:
     "@lit/reactive-element" "^2.1.0"
     lit-element "^4.2.0"
