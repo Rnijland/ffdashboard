@@ -1319,6 +1319,13 @@
   resolved "https://registry.yarnpkg.com/@paulmillr/qr/-/qr-0.2.1.tgz#76ade7080be4ac4824f638146fd8b6db1805eeca"
   integrity sha512-IHnV6A+zxU7XwmKFinmYjUcwlyK9+xkG3/s9KcQhI9BjQKycrJ1JRO+FbNYPwZiPKW3je/DR0k7w8/gLa5eaxQ==
 
+"@phosphor-icons/webcomponents@2.1.5":
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/@phosphor-icons/webcomponents/-/webcomponents-2.1.5.tgz#79dcdcc49ae17ea309080eebc463710221ced890"
+  integrity sha512-JcvQkZxvcX2jK+QCclm8+e8HXqtdFW9xV4/kk2aL9Y3dJA2oQVt+pzbv1orkumz3rfx4K9mn9fDoMr1He1yr7Q==
+  dependencies:
+    lit "^3"
+
 "@polka/url@^1.0.0-next.24":
   version "1.0.0-next.29"
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.29.tgz#5a40109a1ab5f84d6fd8fc928b19f367cbe7e7b1"
@@ -2067,6 +2074,15 @@
     dayjs "1.11.13"
     viem ">=2.29.0"
 
+"@reown/appkit-common@1.8.6":
+  version "1.8.6"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-common/-/appkit-common-1.8.6.tgz#063480fa9c14054781cd346b5fb51c1f6515922c"
+  integrity sha512-A4U/80u+ELqWYKDF/OWXHa4+O2BMILvZSyuXEt2NrNzozrMfUB3yq12jXGkqJHkiv7E8smo0khxneX3cSCGuaA==
+  dependencies:
+    big.js "6.2.2"
+    dayjs "1.11.13"
+    viem ">=2.37.2"
+
 "@reown/appkit-controllers@1.7.20":
   version "1.7.20"
   resolved "https://registry.yarnpkg.com/@reown/appkit-controllers/-/appkit-controllers-1.7.20.tgz#ad59d8eb03bfa00a51157663fa93663c1f8995e8"
@@ -2088,6 +2104,17 @@
     "@walletconnect/universal-provider" "2.21.0"
     valtio "1.13.2"
     viem ">=2.29.0"
+
+"@reown/appkit-controllers@1.8.6":
+  version "1.8.6"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-controllers/-/appkit-controllers-1.8.6.tgz#27acb98ea8076ac99626c38c989db14ff166ca2c"
+  integrity sha512-+ftwSvT8VcMjCJXwf7IfOAp/5lJpJka7Y1nps+iiAE1J1+20BD3yOQ50TUhyCczIegutbuDINlVPUnYufe3a1A==
+  dependencies:
+    "@reown/appkit-common" "1.8.6"
+    "@reown/appkit-wallet" "1.8.6"
+    "@walletconnect/universal-provider" "2.21.7"
+    valtio "2.1.7"
+    viem ">=2.37.2"
 
 "@reown/appkit-pay@1.7.20":
   version "1.7.20"
@@ -2113,6 +2140,18 @@
     lit "3.3.0"
     valtio "1.13.2"
 
+"@reown/appkit-pay@^1.7.20":
+  version "1.8.6"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-pay/-/appkit-pay-1.8.6.tgz#bf88318af741418dfe0ae06ea2119a67da3d0f7f"
+  integrity sha512-fU80ENaKBknYctDnN7RZYLjyW2B29ZGfwIy5x7sEDny9WBlMVAHgG1dAKEKlU6WkYEM5aTaUe1tl4NhhwPpVVg==
+  dependencies:
+    "@reown/appkit-common" "1.8.6"
+    "@reown/appkit-controllers" "1.8.6"
+    "@reown/appkit-ui" "1.8.6"
+    "@reown/appkit-utils" "1.8.6"
+    lit "3.3.0"
+    valtio "2.1.7"
+
 "@reown/appkit-polyfills@1.7.20":
   version "1.7.20"
   resolved "https://registry.yarnpkg.com/@reown/appkit-polyfills/-/appkit-polyfills-1.7.20.tgz#67abc8dcc78693b8871241cfc1272e0b622a4293"
@@ -2124,6 +2163,13 @@
   version "1.7.8"
   resolved "https://registry.yarnpkg.com/@reown/appkit-polyfills/-/appkit-polyfills-1.7.8.tgz#a0d362df8479cc66b7c6aa89e696f30783a3d21b"
   integrity sha512-W/kq786dcHHAuJ3IV2prRLEgD/2iOey4ueMHf1sIFjhhCGMynMkhsOhQMUH0tzodPqUgAC494z4bpIDYjwWXaA==
+  dependencies:
+    buffer "6.0.3"
+
+"@reown/appkit-polyfills@1.8.6":
+  version "1.8.6"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-polyfills/-/appkit-polyfills-1.8.6.tgz#f12e81a7709a0805f713a702e672531528a7bc6f"
+  integrity sha512-aoBkQSHCZvoLgdHfZfeOLswrYHIPGhhknRMUk8UHDhQsoALCvIEYrenhgIDZUSfkJC//z+4OfQO/yVq3g3vecA==
   dependencies:
     buffer "6.0.3"
 
@@ -2173,6 +2219,18 @@
     lit "3.3.0"
     qrcode "1.5.3"
 
+"@reown/appkit-ui@1.8.6":
+  version "1.8.6"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-ui/-/appkit-ui-1.8.6.tgz#857eb24a7caaf22ad5d97db1e155afad31a8eac8"
+  integrity sha512-c2/UYGRoI/nayqiPp+nxxw7Wohdzl7Z1J14/p/HHPYyl1/qtV0DaHZW8ZA3NtxfmFGny7eE4fRz5YXRwNDuzAw==
+  dependencies:
+    "@phosphor-icons/webcomponents" "2.1.5"
+    "@reown/appkit-common" "1.8.6"
+    "@reown/appkit-controllers" "1.8.6"
+    "@reown/appkit-wallet" "1.8.6"
+    lit "3.3.0"
+    qrcode "1.5.3"
+
 "@reown/appkit-utils@1.7.20":
   version "1.7.20"
   resolved "https://registry.yarnpkg.com/@reown/appkit-utils/-/appkit-utils-1.7.20.tgz#65276a14f385a2bd086cc94e7fcc9b8631aca349"
@@ -2202,6 +2260,21 @@
     valtio "1.13.2"
     viem ">=2.29.0"
 
+"@reown/appkit-utils@1.8.6":
+  version "1.8.6"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-utils/-/appkit-utils-1.8.6.tgz#9786967a6329e87b2c3286c73bacca3591debafa"
+  integrity sha512-MpnCsQEsDh3SMU0+0Vsn5aX/2dfO+oNTvwPz4hvb35sHqR1NoP/CO0IzCApLjc84TXqbX5giavzgME5s3QL3Jw==
+  dependencies:
+    "@reown/appkit-common" "1.8.6"
+    "@reown/appkit-controllers" "1.8.6"
+    "@reown/appkit-polyfills" "1.8.6"
+    "@reown/appkit-wallet" "1.8.6"
+    "@wallet-standard/wallet" "1.1.0"
+    "@walletconnect/logger" "2.1.2"
+    "@walletconnect/universal-provider" "2.21.7"
+    valtio "2.1.7"
+    viem ">=2.37.2"
+
 "@reown/appkit-wallet@1.7.20":
   version "1.7.20"
   resolved "https://registry.yarnpkg.com/@reown/appkit-wallet/-/appkit-wallet-1.7.20.tgz#aa3992abb2ce2a7fc0fa31f22c0b8c94dd662aa2"
@@ -2219,6 +2292,16 @@
   dependencies:
     "@reown/appkit-common" "1.7.8"
     "@reown/appkit-polyfills" "1.7.8"
+    "@walletconnect/logger" "2.1.2"
+    zod "3.22.4"
+
+"@reown/appkit-wallet@1.8.6":
+  version "1.8.6"
+  resolved "https://registry.yarnpkg.com/@reown/appkit-wallet/-/appkit-wallet-1.8.6.tgz#6fa069fa77eef5516e8e75691029e83092f83ba6"
+  integrity sha512-m0Um+PLeWEHsW8saBWdjkROFs5DRI++SWb+NL+k4Ys2+PfhH9adAbV8o6SJEUzG4XqWhQsS5QrpNo4ZJIfyu5g==
+  dependencies:
+    "@reown/appkit-common" "1.8.6"
+    "@reown/appkit-polyfills" "1.8.6"
     "@walletconnect/logger" "2.1.2"
     zod "3.22.4"
 
@@ -3546,10 +3629,20 @@ abitype@1.0.8:
   resolved "https://registry.yarnpkg.com/abitype/-/abitype-1.0.8.tgz#3554f28b2e9d6e9f35eb59878193eabd1b9f46ba"
   integrity sha512-ZeiI6h3GnW06uYDLx0etQtX/p8E24UaHHBj57RSjK7YBFe7iuVn07EDpOeP451D06sF27VOz9JJPlIKJmXgkEg==
 
+abitype@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/abitype/-/abitype-1.1.0.tgz#510c5b3f92901877977af5e864841f443bf55406"
+  integrity sha512-6Vh4HcRxNMLA0puzPjM5GBgT4aAcFGKZzSgAXvuZ27shJP6NEpielTuqbBmZILR5/xd0PizkBGy5hReKz9jl5A==
+
 abitype@^1.0.6, abitype@^1.0.8:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/abitype/-/abitype-1.0.9.tgz#f66940f69caf2b6c190088a017e289dbe41090a6"
   integrity sha512-oN0S++TQmlwWuB+rkA6aiEefLv3SP+2l/tC5mux/TLj6qdA6rF15Vbpex4fHovLsMkwLwTIRj8/Q8vXCS3GfOg==
+
+abitype@^1.0.9:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/abitype/-/abitype-1.1.1.tgz#b50ed400f8bfca5452eb4033445c309d3e1117c8"
+  integrity sha512-Loe5/6tAgsBukY95eGaPSDmQHIjRZYQq8PB1MpsNccDIK8WiV+Uw6WzaIXipvaxTEL2yEB0OpEaQv3gs8pkS9Q==
 
 abort-controller@^3.0.0:
   version "3.0.0"
@@ -6281,6 +6374,15 @@ lit@3.3.0:
     lit-element "^4.2.0"
     lit-html "^3.3.0"
 
+lit@^3:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/lit/-/lit-3.3.1.tgz#9dc79be626bc9a3b824de98b107dd662cabdeda6"
+  integrity sha512-Ksr/8L3PTapbdXJCk+EJVB78jDodUMaP54gD24W186zGRARvwrsPfS60wae/SSCTCNZVPd1chXqio1qHQmu4NA==
+  dependencies:
+    "@lit/reactive-element" "^2.1.0"
+    lit-element "^4.2.0"
+    lit-html "^3.3.0"
+
 locate-path@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-5.0.0.tgz#1afba396afd676a6d42504d0a67a3a7eb9f62aa0"
@@ -6911,6 +7013,20 @@ ox@0.8.7:
     abitype "^1.0.8"
     eventemitter3 "5.0.1"
 
+ox@0.9.6:
+  version "0.9.6"
+  resolved "https://registry.yarnpkg.com/ox/-/ox-0.9.6.tgz#5cf02523b6db364c10ee7f293ff1e664e0e1eab7"
+  integrity sha512-8SuCbHPvv2eZLYXrNmC0EC12rdzXQLdhnOMlHDW2wiCPLxBrOOJwX5L5E61by+UjTPOryqQiRSnjIKCI+GykKg==
+  dependencies:
+    "@adraffy/ens-normalize" "^1.11.0"
+    "@noble/ciphers" "^1.3.0"
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "^1.8.0"
+    "@scure/bip32" "^1.7.0"
+    "@scure/bip39" "^1.6.0"
+    abitype "^1.0.9"
+    eventemitter3 "5.0.1"
+
 p-limit@^2.2.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-2.3.0.tgz#3dd33c647a214fdfffd835933eb086da0dc21db1"
@@ -7269,10 +7385,10 @@ raw-body@^3.0.0:
     iconv-lite "0.6.3"
     unpipe "1.0.0"
 
-react-day-picker@^9.8.1:
-  version "9.9.0"
-  resolved "https://registry.yarnpkg.com/react-day-picker/-/react-day-picker-9.9.0.tgz#494da0f1470e8f0ca61c30100b17615687b68393"
-  integrity sha512-NtkJbuX6cl/VaGNb3sVVhmMA6LSMnL5G3xNL+61IyoZj0mUZFWTg4hmj7PHjIQ8MXN9dHWhUHFoJWG6y60DKSg==
+react-day-picker@^9.11.0:
+  version "9.11.0"
+  resolved "https://registry.yarnpkg.com/react-day-picker/-/react-day-picker-9.11.0.tgz#3695e1fa1438cded1a02ff55dfe868fdd07aa67a"
+  integrity sha512-L4FYOaPrr3+AEROeP6IG2mCORZZfxJDkJI2df8mv1jyPrNYeccgmFPZDaHyAuPCBCddQFozkxbikj2NhMEYfDQ==
   dependencies:
     "@date-fns/tz" "^1.4.1"
     date-fns "^4.1.0"
@@ -8607,6 +8723,13 @@ valtio@2.1.5:
   dependencies:
     proxy-compare "^3.0.1"
 
+valtio@2.1.7:
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/valtio/-/valtio-2.1.7.tgz#203396dd7be778d00dca03fd629ded1254178eeb"
+  integrity sha512-DwJhCDpujuQuKdJ2H84VbTjEJJteaSmqsuUltsfbfdbotVfNeTE4K/qc/Wi57I9x8/2ed4JNdjEna7O6PfavRg==
+  dependencies:
+    proxy-compare "^3.0.1"
+
 vary@^1, vary@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
@@ -8693,6 +8816,20 @@ viem@>=2.29.0, viem@>=2.33.3, viem@^2.1.1, viem@^2.27.2, viem@^2.31.7, viem@^2.3
     abitype "1.0.8"
     isows "1.0.7"
     ox "0.8.7"
+    ws "8.18.3"
+
+viem@>=2.37.2:
+  version "2.37.7"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.37.7.tgz#1933b6780cbcf39c6a5eabc45fa3357b33448705"
+  integrity sha512-KmTK/xc6790I0V9iaiJz8C3RdGevpU+fPvg53eOlfEfsfz0wCypXqOlOmCcjzkpmf2XFoEtu9MAxhMqk8YdNNA==
+  dependencies:
+    "@noble/curves" "1.9.1"
+    "@noble/hashes" "1.8.0"
+    "@scure/bip32" "1.7.0"
+    "@scure/bip39" "1.6.0"
+    abitype "1.1.0"
+    isows "1.0.7"
+    ox "0.9.6"
     ws "8.18.3"
 
 wagmi@^2.16.5:
